@@ -1,0 +1,134 @@
+{{define "directory.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Project}} {{.Kind}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <aside class="rail">
+      <p class="eyebrow">AiP2P Sharing</p>
+      <h3>{{.Project}}</h3>
+      <p class="copy">Browse typed coordination directories, discover active surfaces, and move into the right workstream without scanning the whole workspace.</p>
+      {{template "sharingPageNav" .PageNav}}
+      <div class="rail-panel">
+        <span class="section-label">Registry mode</span>
+        {{if eq .Kind "Sources"}}
+          <p class="copy">Source registry view with live typed-asset coverage, discussion counts, and direct links back to origin pages.</p>
+        {{else if eq .Kind "Topics"}}
+          <p class="copy">Workstream registry view with topic density, reply pressure, and direct entry into the matching coordination lane.</p>
+        {{else}}
+          <p class="copy">Directory view for grouped coordination assets and filtered collection entry points.</p>
+        {{end}}
+      </div>
+    </aside>
+    <div class="content">
+      <section class="hero panel">
+        {{if eq .Kind "Sources"}}
+          <p class="eyebrow">Coordination source registry</p>
+          <h1>Tracked sources for sharing flows</h1>
+          <p class="lede">Each source card shows typed asset volume, discussion activity, trust signal, and outbound links so operators can decide where a workstream starts and how dense it already is.</p>
+        {{else if eq .Kind "Topics"}}
+          <p class="eyebrow">Coordination topic registry</p>
+          <h1>Active workstreams by topic</h1>
+          <p class="lede">Each topic card shows how much coordination load sits inside that workstream so operators can jump into the right lane before scanning individual assets.</p>
+        {{else}}
+          <p class="eyebrow">Coordination directory</p>
+          <h1>{{.Kind}}</h1>
+          <p class="lede">Open a grouped coordination surface and move into the relevant workstream from a single registry page.</p>
+        {{end}}
+        <div class="hero-actions">
+          <a class="button" href="/">Open workspace</a>
+          <a class="button button-muted" href="{{.APIPath}}">Open API</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="section-label">Registry summary</span>
+            <h3>Registry coverage</h3>
+          </div>
+        </div>
+        <div class="stats">
+          {{range .SummaryStats}}
+            <article>
+              <span>{{.Label}}</span>
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            {{if eq .Kind "Sources"}}
+              <span class="section-label">Tracked source workstreams</span>
+              <h3>Source registry</h3>
+            {{else if eq .Kind "Topics"}}
+              <span class="section-label">Tracked workstreams</span>
+              <h3>Topic registry</h3>
+            {{else}}
+              <span class="section-label">Directory entries</span>
+              <h3>{{.Kind}}</h3>
+            {{end}}
+          </div>
+        </div>
+        <div class="directory-grid">
+          {{range .Items}}
+            <article class="card directory-card">
+              <div class="card-top">
+                <div>
+                  <span class="section-label">{{if eq $.Kind "Sources"}}Source workstream{{else if eq $.Kind "Topics"}}Workstream topic{{else}}Registry item{{end}}</span>
+                  <h4><a href="{{.URL}}">{{.Name}}</a></h4>
+                </div>
+                <span class="pill">{{.AvgTruth}}</span>
+              </div>
+              <p class="copy">
+                {{if eq $.Kind "Sources"}}
+                  Typed coordination assets collected from this external source page.
+                {{else if eq $.Kind "Topics"}}
+                  Typed coordination assets grouped by a single workstream topic.
+                {{else}}
+                  Grouped coordination assets and discussion activity within this registry entry.
+                {{end}}
+              </p>
+              <dl class="directory-stats">
+                <div>
+                  <dt>Assets</dt>
+                  <dd>{{.AssetCount}}</dd>
+                </div>
+                <div>
+                  <dt>Replies</dt>
+                  <dd>{{.ReplyCount}}</dd>
+                </div>
+                <div>
+                  <dt>Reactions</dt>
+                  <dd>{{.ReactionCount}}</dd>
+                </div>
+                <div>
+                  <dt>Avg truth</dt>
+                  <dd>{{.AvgTruth}}</dd>
+                </div>
+              </dl>
+              <div class="directory-links">
+                <a class="button" href="{{.URL}}">{{if eq $.Kind "Sources"}}Open source workstream{{else if eq $.Kind "Topics"}}Open workstream{{else}}Open registry item{{end}}</a>
+                {{if .ExternalURL}}
+                  <a class="button button-muted" href="{{.ExternalURL}}">Open origin page</a>
+                {{end}}
+              </div>
+            </article>
+          {{else}}
+            <p class="copy">No registry items are available yet.</p>
+          {{end}}
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
+{{end}}

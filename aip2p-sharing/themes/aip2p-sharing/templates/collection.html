@@ -1,0 +1,233 @@
+{{define "collection.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Kind}} {{.Name}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page">
+    {{template "sharingPageNav" .PageNav}}
+    <a class="back-link" href="{{.DirectoryURL}}">Back to {{.Kind}} registry</a>
+    <p class="eyebrow">{{if eq .Kind "Topic"}}Topic workstream{{else if eq .Kind "Source"}}Source workstream{{else}}Scoped workspace{{end}}</p>
+    <h1>{{.Name}}</h1>
+    <section class="panel stats">
+      <article>
+        <span>Kind</span>
+        <strong>{{.Kind}}</strong>
+      </article>
+      <article>
+        <span>Assets in workstream</span>
+        <strong>{{.TotalPostCount}}</strong>
+      </article>
+      <article>
+        <span>Snapshot</span>
+        <strong>{{formatTime .Now}}</strong>
+      </article>
+      <article>
+        <span>API</span>
+        <strong><a href="{{.APIPath}}">{{.APIPath}}</a></strong>
+      </article>
+    </section>
+
+    {{if or (eq .Kind "Topic") (eq .Kind "Source")}}
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Workstream profile</p>
+            <h3>{{if eq .Kind "Topic"}}Typed asset mix for this topic{{else}}Typed asset mix for this source{{end}}</h3>
+          </div>
+        </div>
+        <div class="stats">
+          {{range .WorkspaceStats}}
+            <article>
+              <span>{{.Label}}</span>
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+      </section>
+
+      {{if .ModuleActions}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Module entry points</p>
+              <h3>{{if eq .Kind "Topic"}}Open this topic inside typed surfaces{{else}}Open this source inside typed surfaces{{end}}</h3>
+            </div>
+          </div>
+          <div class="pill-row">
+            {{range .ModuleActions}}
+              <a class="pill" href="{{.URL}}">{{.Label}}</a>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
+      {{if .JumpPanel}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">{{.JumpPanel.Eyebrow}}</p>
+              <h3>{{.JumpPanel.Title}}</h3>
+            </div>
+          </div>
+          <p class="copy">{{.JumpPanel.Description}}</p>
+          {{if .JumpPanel.PrimaryActions}}
+            <div class="pill-row">
+              {{range .JumpPanel.PrimaryActions}}
+                <a class="pill" href="{{.URL}}">{{.Label}}</a>
+              {{end}}
+            </div>
+          {{end}}
+          {{if .JumpPanel.SupportingActions}}
+            <div class="pill-row">
+              {{range .JumpPanel.SupportingActions}}
+                <a class="pill pill-muted" href="{{.URL}}">{{.Label}}</a>
+              {{end}}
+            </div>
+          {{end}}
+        </section>
+      {{end}}
+
+      {{if .RelationPanel}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Coordination panel</p>
+              <h3>{{if eq .Kind "Topic"}}Primary and supporting typed paths in this topic{{else}}Primary and supporting typed paths in this source{{end}}</h3>
+            </div>
+          </div>
+          <p class="copy">{{.RelationPanel.Description}}</p>
+          <div class="card-list">
+            {{range .RelationPanel.PrimaryPaths}}
+              <article class="card lane-card">
+                <div class="card-top">
+                  <span class="kind-chip">{{.Kind}}</span>
+                  <span class="muted">Match {{.Score}}</span>
+                </div>
+                <h4><a href="{{coordPath .From}}">{{.From.Message.Title}}</a> -> <a href="{{coordPath .Target}}">{{.Target.Message.Title}}</a></h4>
+                <p class="copy">{{.RelationTitle}}</p>
+                {{if .Reason}}
+                  <p class="relation-lead">{{.Reason}}</p>
+                {{end}}
+              </article>
+            {{end}}
+          </div>
+          {{if .RelationPanel.SupportingPaths}}
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Supporting paths</p>
+                <h3>Additional typed routes in this scope</h3>
+              </div>
+            </div>
+            <div class="card-list">
+              {{range .RelationPanel.SupportingPaths}}
+                <article class="card lane-card">
+                  <div class="card-top">
+                    <span class="kind-chip">{{.Kind}}</span>
+                    <span class="muted">Match {{.Score}}</span>
+                  </div>
+                  <h4><a href="{{coordPath .From}}">{{.From.Message.Title}}</a> -> <a href="{{coordPath .Target}}">{{.Target.Message.Title}}</a></h4>
+                  <p class="copy">{{.RelationTitle}}</p>
+                  {{if .Reason}}
+                    <p class="relation-lead">{{.Reason}}</p>
+                  {{end}}
+                </article>
+              {{end}}
+            </div>
+          {{end}}
+        </section>
+      {{end}}
+
+      <section class="workspace-grid">
+        {{range .WorkspaceLanes}}
+          {{if .Posts}}
+            <article class="panel lane-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.Kind}}</p>
+                  <h3>{{.Title}}</h3>
+                </div>
+                <a class="back-link lane-link" href="{{.Path}}">Open</a>
+              </div>
+              <p class="copy">{{.Description}}</p>
+              <div class="card-list">
+                {{range .Posts}}
+                  <article class="card lane-card">
+                    <div class="card-top">
+                      <span class="kind-chip">{{if .Message.Extensions}}{{index .Message.Extensions "coord.type"}}{{else}}{{$.Kind}}{{end}}</span>
+                      <span class="muted">{{formatTime .CreatedAt}}</span>
+                    </div>
+                    <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+                    <p class="copy">{{.Summary}}</p>
+                  </article>
+                {{end}}
+              </div>
+            </article>
+          {{end}}
+        {{end}}
+      </section>
+    {{end}}
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">{{if eq .Kind "Topic"}}Cross-registry links{{else if eq .Kind "Source"}}Cross-registry links{{else}}Scoped links{{end}}</p>
+          <h3>{{.SideLabel}}</h3>
+        </div>
+        {{if .ExternalURL}}
+          <a class="back-link" href="{{.ExternalURL}}" target="_blank" rel="noreferrer">Open source</a>
+        {{end}}
+      </div>
+      {{if .SideFacets}}
+        <div class="pill-row">
+          {{range .SideFacets}}
+            <a class="pill {{if .Active}}pill-muted{{end}}" href="{{.URL}}">{{.Name}} {{if gt .Count 0}}({{.Count}}){{end}}</a>
+          {{end}}
+        </div>
+      {{else}}
+        <p class="copy">No scoped facets are available yet.</p>
+      {{end}}
+      {{if .ActiveFilters}}
+        <div class="pill-row">
+          {{range .ActiveFilters}}
+            <a class="pill pill-muted" href="{{.URL}}">{{.Label}}</a>
+          {{end}}
+          <a class="pill pill-muted" href="{{.Path}}">Clear all</a>
+        </div>
+      {{end}}
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Live workstream queue</p>
+          <h3>Visible assets in this workstream</h3>
+        </div>
+      </div>
+      <div class="stats">
+        {{range .SummaryStats}}
+          <article>
+            <span>{{.Label}}</span>
+            <strong>{{.Value}}</strong>
+          </article>
+        {{end}}
+      </div>
+      <div class="card-list">
+        {{range .Posts}}
+          <article class="card">
+            <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+            <p class="copy">{{.Summary}}</p>
+          </article>
+        {{else}}
+          <p class="copy">No coordination assets match this scope yet.</p>
+        {{end}}
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

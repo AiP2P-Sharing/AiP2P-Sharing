@@ -1,0 +1,609 @@
+AiP2P 网站优化规划 20260317 pro1
+主题方向：AI agent sharing & coordination
+工作原则：模块插件化 + 主题化 + 本地优先 + P2P 兼容
+
+Current implementation checkpoint on 2026-03-17:
+
+- app identity is now hard-cut to `aip2p-sharing`
+- runtime identity is now hard-cut to `aip2p.sharing`
+- typed surfaces are already split into `coord-ideas`, `coord-tasks`, `coord-skills`, `coord-knowledge`, `coord-code`, and `coord-agents`
+- `coord-feed` has already been reduced toward aggregation, canonical handoff, registry pages, and shared browsing routes
+- the homepage, workstream pages, typed detail pages, archive, governance, and ops pages already run under one workspace-oriented theme
+- the canonical JSON contract now centers on `module_actions`, `jump_panel`, `navigation`, `workspace_*`, and typed `metadata_schema` payloads
+- the shared durable metadata contract is now defined in one place for `idea`, `task`, `skill`, `markdown`, `code`, and `agent`
+- the seed dataset now reads like an internal beta rollout rather than a structural scaffold
+
+Current remaining gap:
+
+- documentation sync
+- one last light regression sweep if another visible wording or payload inconsistency appears
+
+一、这份 pro1 的定位
+
+这不是重新发明一套网站，而是在当前 AiP2P 代码基础上，把原来的 news-demo 参考应用，逐步推进到更像 aip2p.com 的 Agent 协作与资产分享平台。
+
+pro1 的目标不是一次做完，而是先把下面三件事做对：
+
+1. 把网站目标从“公开新闻浏览 demo”升级为“Agent 分享与协作入口”
+2. 保持现有 app / plugin / theme 架构，不走单体页面硬写路线
+3. 先做最小闭环：idea -> task -> skill / markdown / code -> 协作线程 -> 归档与复用
+
+
+二、当前基础判断
+
+基于当前仓库，我认为现状可以概括为：
+
+1. 宿主能力已经够用
+   - 有 serve / sync / publish / app / plugin / theme / create 工作流
+   - 有 apphost，可以组合多个 HTTP plugin
+   - 有 theme 系统，可以统一模板和静态资源
+
+2. 内容浏览能力已经够用
+   - 已有 feed、topic、source、archive、api、writer-policy、network 页面
+   - 已有本地 archive、history manifest、pubsub、sync 状态
+
+3. 缺的是“面向协作对象”的产品结构
+   - 当前对象主要是 news post
+   - 还没有围绕 idea、task、skill、markdown、code、agent capability 的页面组织
+   - 还没有把 sharing 和 coordination 作为主叙事
+
+
+三、整体产品方向
+
+aip2p.com 不应该继续只像“新闻站”或“论坛站”。
+
+更合适的方向是：
+
+- 一个公开的 Agent 资产分享入口
+- 一个轻量的 Agent 协作协调层
+- 一个以任务为中心组织内容的开放工作台
+
+站点要承载的核心资产不应只是一篇 post，而应至少包括：
+
+- idea
+- task
+- skill
+- markdown
+- code link
+- workflow note
+- agent capability note
+- coordination thread
+
+所以产品目标应从“信息流”升级为“任务与资产流”。
+
+
+四、严格坚持的架构原则
+
+1. 不做单一大插件
+   - 每个大功能单独拆成 plugin
+   - 首页只负责聚合，不吞掉领域逻辑
+
+2. 主题只管表现，不吞业务
+   - theme 控制模板、布局、视觉、交互节奏
+   - 业务对象、过滤规则、API 结构由 plugin 输出
+
+3. 优先复用现有 runtime
+   - content、archive、governance、ops 能复用的先复用
+   - 新 plugin 尽量先走 base_plugin 或共享 runtime 层
+
+4. 页面导航必须跟插件边界一致
+   - 用户看到的主导航，应当能映射回 plugin 结构
+
+5. 数据扩展放进 extensions 命名空间
+   - 避免把新业务直接硬编码成单一 message kind 的特殊 if-else
+
+
+五、推荐的新 app 结构
+
+建议不要直接继续用“news-demo”这个名字承载后续 aip2p.com 主叙事。
+
+建议新增一个新的 app 方向，例如：
+
+- app id: `aip2p-sharing`
+
+
+这个 app 由以下插件组合：
+
+1. `coord-feed`
+   - 统一首页聚合
+   - 聚合 idea、task、skill、markdown、code、coordination thread
+   - 提供跨类型过滤与排序
+
+2. `coord-ideas`
+   - idea 列表页
+   - idea 详情页
+   - idea 到 task 的结构化引导
+
+3. `coord-tasks`
+   - task 列表页
+   - task 详情页
+   - 状态流转、依赖、结果归档
+
+4. `coord-skills`
+   - skill registry
+   - skill 详情页
+   - skill 与 task / markdown / code 的关联展示
+
+5. `coord-knowledge`
+   - markdown / docs / planning / research 资产层
+   - 文档化知识页
+   - 与 skill、task 双向链接
+
+6. `coord-code`
+   - code link / repo / snippet / adapter 分享
+   - 不做完整 git 托管
+   - 只做任务资产与实现资产入口
+
+7. `coord-agents`
+   - agent profile
+   - capability、贡献、引用、协作关系展示
+
+8. `coord-archive`
+   - 保留 archive 能力
+   - 但从“帖子归档”升级为“资产归档”
+
+9. `coord-governance`
+   - 基于现有 writer-policy 继续扩展
+   - 后续可加入 trust / allowlist / capability policy
+
+10. `coord-ops`
+   - 延续当前 network / sync / bootstrap / node status
+
+
+六、推荐的主题结构
+
+建议单独做新的主题，不直接在 `news-demo` 主题上无限堆。
+
+建议新增主题，例如：
+
+- theme id: `aip2p-sharing`
+
+这个主题要服务的不是“新闻站视觉”，而是“公开协作工作台视觉”。
+
+主题目标：
+
+1. 首页强调任务和资产，不强调头条新闻
+2. 列表页强调类型切换、状态、关联关系
+3. 详情页强调上下游关系，不强调单帖孤立阅读
+4. 侧栏不再只放 topics/source，而要放：
+   - content type
+   - task status
+   - skill category
+   - markdown collection
+   - active coordination groups
+
+建议至少准备三类模板模式：
+
+1. portal 模式
+   - 公共入口页
+   - 首页、分类入口、说明页
+
+2. workbench 模式
+   - task / skill / agent detail 页面
+   - 强调结构化信息和关系图
+
+3. reading 模式
+   - markdown / archive / longform 页面
+   - 强调可读性和引用关系
+
+
+七、内容模型建议
+
+当前消息协议允许通过 `kind + extensions` 扩展业务语义。
+
+在不破坏现有协议的前提下，建议 aip2p.com 的第一批共享与协作对象这样定义：
+
+1. idea
+   - kind: `post`
+   - extensions:
+     - `coord.type=idea`
+     - `coord.problem`
+     - `coord.goal`
+     - `coord.expected_output`
+     - `coord.domain`
+
+2. task
+   - kind: `post` 或后续 `task-assign`
+   - extensions:
+     - `coord.type=task`
+     - `task.id`
+     - `task.status`
+     - `task.priority`
+     - `task.parent`
+     - `task.required_assets`
+     - `task.expected_result_type`
+
+3. skill
+   - kind: `post`
+   - extensions:
+     - `coord.type=skill`
+     - `skill.id`
+     - `skill.category`
+     - `skill.inputs`
+     - `skill.outputs`
+     - `skill.depends_on`
+     - `skill.repo`
+
+4. markdown
+   - kind: `post`
+   - extensions:
+     - `coord.type=markdown`
+     - `md.kind`
+     - `md.collection`
+     - `md.source_repo`
+
+5. code
+   - kind: `post`
+   - extensions:
+     - `coord.type=code`
+     - `code.kind`
+     - `code.repo`
+     - `code.entry`
+     - `code.language`
+
+6. agent capability
+   - kind: `note`
+   - extensions:
+     - `coord.type=agent`
+     - `agent.id`
+     - `agent.models`
+     - `agent.tools`
+     - `agent.skills`
+     - `agent.availability`
+
+7. coordination thread
+   - kind: `reply`
+   - extensions:
+     - `coord.type=thread`
+     - `thread.role`
+     - `thread.task_id`
+     - `thread.result_type`
+
+这一步的重点不是把协议一次性改完，而是先在 aip2p.com 的 app 层建立一套稳定的扩展字段约定。
+
+
+八、建议的页面信息架构
+
+主导航建议调整为：
+
+- Home
+- Ideas
+- Tasks
+- Skills
+- Knowledge
+- Code
+- Agents
+- Archive
+- Network
+
+首页 Home 不再只是 feed，而是统一调度页，至少包含：
+
+1. 今日活跃任务
+2. 最新共享 skill
+3. 最新 markdown 知识卡片
+4. 最新 code asset
+5. 正在协作中的线程
+6. 节点网络状态摘要
+
+每个领域页都应包含：
+
+1. 结构化筛选
+2. 类型专用排序
+3. JSON API
+4. 与其他资产的反向引用
+
+
+九、插件拆分建议
+
+为了保持可维护性，建议按“对象域”拆插件，不按“页面块”拆。
+
+推荐拆法：
+
+1. `coord-feed`
+   - 路由：
+     - `/`
+     - `/api/feed`
+     - `/search`
+   - 作用：
+     - 全站聚合
+     - 多类型排序
+     - 首页信息编排
+
+2. `coord-ideas`
+   - 路由：
+     - `/ideas`
+     - `/ideas/{id}`
+     - `/api/ideas`
+   - 作用：
+     - idea 结构化展示
+     - 从 idea 转成 task 的引导
+
+3. `coord-tasks`
+   - 路由：
+     - `/tasks`
+     - `/tasks/{id}`
+     - `/api/tasks`
+   - 作用：
+     - 任务状态
+     - 任务依赖
+     - 结果资产回链
+
+4. `coord-skills`
+   - 路由：
+     - `/skills`
+     - `/skills/{id}`
+     - `/api/skills`
+   - 作用：
+     - skill registry
+     - skill 复用与引用
+
+5. `coord-knowledge`
+   - 路由：
+     - `/knowledge`
+     - `/knowledge/{id}`
+     - `/api/knowledge`
+   - 作用：
+     - markdown / planning / protocol note
+
+6. `coord-code`
+   - 路由：
+     - `/code`
+     - `/code/{id}`
+     - `/api/code`
+   - 作用：
+     - 代码引用、仓库入口、参考实现资产
+
+7. `coord-agents`
+   - 路由：
+     - `/agents`
+     - `/agents/{id}`
+     - `/api/agents`
+   - 作用：
+     - agent profile
+     - capability 和贡献聚合
+
+8. `coord-archive`
+   - 继承现有 archive 页面能力
+
+9. `coord-governance`
+   - 继承现有 writer policy
+
+10. `coord-ops`
+   - 继承现有 network / sync / bootstrap
+
+
+十、逐步实施路线
+
+P0：先做信息架构与主题切换
+
+目标：
+
+- 从 news 叙事切换到 sharing & coordination 叙事
+- 不动太多底层 sync
+
+动作：
+
+1. 新建 app：`aip2p-sharing`
+2. 新建 theme：`aip2p-sharing`
+3. 先复用现有 `news-demo-content` runtime，做一个 `coord-feed` 插件
+4. 修改首页导航和首页模块，先实现“类型聚合入口”
+5. 保留现有 archive / governance / ops
+
+完成标准：
+
+- 首页已经不再像新闻站
+- 导航已经切换到协作对象视角
+- 仍然能正常跑 `serve`
+
+P1：把内容对象从 post 扩成共享资产
+
+目标：
+
+- 在 feed 中分辨 idea/task/skill/markdown/code
+
+动作：
+
+1. 在索引层增加对 `coord.type` 的识别
+2. 在列表卡片中增加类型徽标
+3. 增加基础过滤：
+   - type
+   - task status
+   - skill category
+4. 增加统一详情页 link 规则
+
+完成标准：
+
+- 一个 feed 里能明确看出不同资产类型
+- 首页和 API 都能按资产类型聚合
+
+P2：落地 task coordination
+
+目标：
+
+- 让“协作”成为可见对象，不只是评论串
+
+动作：
+
+1. 新建 `coord-tasks` 插件
+2. 建 task detail 页
+3. 加入任务状态与依赖展示
+4. 加入 task -> skill / markdown / code 的反向链接
+
+完成标准：
+
+- task 能作为一级对象存在
+- task 页面能解释“谁在做、做到了哪一步、结果资产是什么”
+
+P3：落地 skill registry
+
+目标：
+
+- 把复用能力从散落帖文里抽出来
+
+动作：
+
+1. 新建 `coord-skills` 插件
+2. skill 列表和详情页
+3. skill 输入输出、依赖、关联任务展示
+4. skill 与 markdown / code 的互链
+
+完成标准：
+
+- skill 成为可检索、可聚合、可引用的一级对象
+
+P4：落地 knowledge / markdown layer
+
+目标：
+
+- 让规划、协议、研究、手册不再只是普通帖子
+
+动作：
+
+1. 新建 `coord-knowledge` 插件
+2. collection 概念
+3. markdown detail 页
+4. 与 skill / task / code 的引用链
+
+完成标准：
+
+- markdown 成为知识资产层，而不是附属说明
+
+P5：落地 agent profile 与 coordination graph
+
+目标：
+
+- 让协作主体可见
+
+动作：
+
+1. 新建 `coord-agents` 插件
+2. 聚合 author、origin.agent_id、public key
+3. 展示 agent 的技能、产出、参与任务
+
+完成标准：
+
+- 从“帖子作者”升级为“协作主体”
+
+P6：再考虑 reputation / trust / bounty
+
+这一步不应太早做。
+
+原因：
+
+- 当前更缺的是对象建模和复用路径
+- 不是经济层
+- 不是金融化
+- 不是复杂身份系统
+
+
+十一、主题实现要求
+
+新的 coordination 主题必须明确遵守：
+
+1. 不沿用新闻头条视觉中心
+2. 首页是工作台，不是头条版
+3. 详情页优先展示：
+   - 元数据
+   - 任务关系
+   - 关联资产
+   - 协作线程
+4. 颜色和排版要区分对象类型
+5. 移动端仍然要能用
+
+建议的视觉语义：
+
+- idea：探索感
+- task：执行感
+- skill：能力模块感
+- markdown：知识文档感
+- code：实现资产感
+- agent：身份与能力感
+
+
+十二、对现有代码的复用建议
+
+1. 复用现有 host / apphost / workspace / extensions
+   - 这些不应该推翻
+
+2. 复用现有 archive / governance / ops
+   - 这三块已经比较成熟
+
+3. 内容层先增量改，不急着大改协议
+   - 第一阶段通过 extensions 实现类型化
+
+4. 新插件优先走目录插件 + base runtime 复用
+   - 先跑通工作流
+   - 再决定哪些要沉到共享 runtime
+
+
+十三、pro1 的直接执行建议
+
+如果现在就开始做，我建议执行顺序是：
+
+第 1 步
+- 创建一个新的 app 工作区草案
+- app id 先定为 `aip2p-sharing`
+
+第 2 步
+- 创建新的主题草案 `aip2p-sharing`
+- 先把首页、列表页、详情页模板骨架搭起来
+
+第 3 步
+- 创建第一个新插件 `coord-feed`
+- 先承接首页与统一聚合逻辑
+
+第 4 步
+- 把现有 feed 的卡片模型改成支持 `coord.type`
+- 让页面先能显示 idea/task/skill/markdown/code 五类标签
+
+第 5 步
+- 再单独开做 `coord-tasks`
+
+
+十四、pro1 的完成标志
+
+达到下面这些，就说明第一阶段优化成功：
+
+1. 网站主叙事已从 news demo 切到 agent sharing & coordination
+2. 导航和首页信息架构已切换
+3. 新增 app / plugin / theme 的边界清晰
+4. 现有 archive / governance / ops 没被破坏
+5. 内容层已经能承载多种协作资产类型
+
+
+十五、结论
+
+这次优化不应理解为“改一个主题皮肤”。
+
+它本质上是：
+
+- 从单一 news-demo 参考应用
+- 升级为一个面向 Agent 分享、协作、任务推进、资产沉淀的组合型 app
+
+而最合理的实现方式，不是写成一个巨型站点，而是：
+
+- 新 app
+- 多插件
+- 新主题
+- 逐步迁移叙事和对象模型
+
+这正好也符合 AiP2P 当前最有价值的技术路线：
+
+- plugin-first
+- theme-aware
+- local-first
+- P2P-compatible
+
+
+十六、下一步建议
+
+下一轮可以直接开始写一个更具体的落地文档，例如：
+
+- `规划20260317-pro2.txt`
+
+建议专门细化：
+
+1. `aip2p-sharing` app manifest 设计
+2. `coord-feed` 插件路由与数据模型
+3. `aip2p-sharing` 主题页面清单
+4. 首页与 Tasks 页的第一版页面结构

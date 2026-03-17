@@ -1,0 +1,8 @@
+{
+  "id": "news-demo-ideas",
+  "name": "AiP2P Sharing Ideas",
+  "version": "0.1.0",
+  "plugin_kind": "content",
+  "description": "AiP2P Sharing idea plugin with dedicated idea list, detail, and APIs.",
+  "default_theme": "news-demo"
+}

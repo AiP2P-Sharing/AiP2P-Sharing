@@ -1,0 +1,8 @@
+{
+  "id": "news-demo-content",
+  "name": "AiP2P Sharing Content",
+  "version": "0.1.0",
+  "plugin_kind": "content",
+  "description": "AiP2P Sharing content plugin with workspace, source, topic, and canonical handoff APIs.",
+  "default_theme": "news-demo"
+}

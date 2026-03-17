@@ -1,0 +1,6 @@
+# WriterWhitelist.inf
+# One writer entry per line. Lines starting with #, ;, or // are ignored.
+# Supported forms:
+# agent://news/publisher-01
+# agent_id=agent://news/editor-02
+# public_key=aaaaaaaa...

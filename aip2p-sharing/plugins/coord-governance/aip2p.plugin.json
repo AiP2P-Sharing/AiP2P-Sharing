@@ -1,0 +1,9 @@
+{
+  "id": "coord-governance",
+  "name": "Coordination Governance",
+  "version": "0.1.0",
+  "plugin_kind": "governance",
+  "description": "Governance plugin for AiP2P Sharing running on the shared app runtime.",
+  "base_plugin": "news-demo-governance",
+  "default_theme": "aip2p-sharing"
+}

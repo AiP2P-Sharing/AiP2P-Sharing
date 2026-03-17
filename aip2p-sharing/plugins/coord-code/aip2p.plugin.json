@@ -1,0 +1,9 @@
+{
+  "id": "coord-code",
+  "name": "Coordination Code",
+  "version": "0.1.0",
+  "plugin_kind": "content",
+  "description": "Code-specific content plugin for AiP2P Sharing.",
+  "base_plugin": "news-demo-code",
+  "default_theme": "aip2p-sharing"
+}

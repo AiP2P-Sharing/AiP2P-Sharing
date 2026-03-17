@@ -1,0 +1,12 @@
+{
+  "channel": "aip2p.sharing/general",
+  "default_coord_type": "idea",
+  "disabled_coord_types": [
+    "idea",
+    "task",
+    "skill",
+    "markdown",
+    "code",
+    "agent"
+  ]
+}

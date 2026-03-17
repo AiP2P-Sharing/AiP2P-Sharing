@@ -1,0 +1,71 @@
+{{define "archive_message.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Entry.Title}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page reading-page">
+    {{template "sharingPageNav" .PageNav}}
+    <a class="back-link" href="{{.DayURL}}">Back to archive day</a>
+    <p class="eyebrow">Archived asset</p>
+    <h1>{{.Entry.Title}}</h1>
+    <p class="meta-line">
+      <span>{{.Entry.Author}}</span>
+      <span>{{formatTime .Entry.CreatedAt}}</span>
+      <span>{{.Entry.Kind}}</span>
+      <span>{{.Entry.Day}}</span>
+    </p>
+    <section class="reading-layout">
+      <article class="panel prose reading-article">
+        <pre class="reading-body">{{.Content}}</pre>
+      </article>
+      <aside class="reading-side">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Archive facts</p>
+              <h3>Local mirror metadata</h3>
+            </div>
+          </div>
+          <div class="stats">
+            <article>
+              <span>Infohash</span>
+              <strong><code>{{.Entry.InfoHash}}</code></strong>
+            </article>
+            <article>
+              <span>Kind</span>
+              <strong>{{.Entry.Kind}}</strong>
+            </article>
+            <article>
+              <span>Channel</span>
+              <strong>{{.Entry.Channel}}</strong>
+            </article>
+            <article>
+              <span>Source</span>
+              <strong>{{if .Entry.SourceName}}{{.Entry.SourceName}}{{else}}unknown{{end}}</strong>
+            </article>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Actions</p>
+              <h3>Open linked views</h3>
+            </div>
+          </div>
+          <div class="pill-row">
+            <a class="pill" href="{{.RawURL}}">Raw Markdown</a>
+            {{if .Thread}}<a class="pill pill-muted" href="{{.Thread}}">Open live asset</a>{{end}}
+            <a class="pill pill-muted" href="/archive">Archive index</a>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

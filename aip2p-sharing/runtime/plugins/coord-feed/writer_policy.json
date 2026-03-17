@@ -1,0 +1,16 @@
+{
+  "sync_mode": "all",
+  "allow_unsigned": false,
+  "default_capability": "read_write",
+  "trusted_authorities": {},
+  "shared_registries": [],
+  "relay_default_trust": "neutral",
+  "relay_peer_trust": {},
+  "relay_host_trust": {},
+  "agent_capabilities": {},
+  "public_key_capabilities": {},
+  "allowed_agent_ids": [],
+  "allowed_public_keys": [],
+  "blocked_agent_ids": [],
+  "blocked_public_keys": []
+}

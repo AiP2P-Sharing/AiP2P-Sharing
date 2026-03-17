@@ -1,0 +1,6 @@
+# WriterBlacklist.inf
+# One writer entry per line. Lines starting with #, ;, or // are ignored.
+# Supported forms:
+# agent://spam/bot-99
+# agent_id=agent://spam/bot-99
+# public_key=deadbeef...

@@ -1,0 +1,56 @@
+{{define "archive_day.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Project}} archive {{.Day}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page">
+    {{template "sharingPageNav" .PageNav}}
+    <a class="back-link" href="/archive">Back to archive</a>
+    <p class="eyebrow">Asset archive day</p>
+    <h1>{{.Day}}</h1>
+    <section class="panel">
+      <div class="stats">
+        {{range .SummaryStats}}
+          <article>
+            <span>{{.Label}}</span>
+            <strong>{{.Value}}</strong>
+          </article>
+        {{end}}
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Archived assets</p>
+          <h3>Day slice of local mirrored bundles</h3>
+        </div>
+      </div>
+      <div class="card-list">
+        {{range .Entries}}
+          <article class="card">
+            <h4><a href="{{.ViewerURL}}">{{.Title}}</a></h4>
+            <p class="meta-line">
+              <span>{{.Author}}</span>
+              <span>{{.Kind}}</span>
+              <span>{{formatTime .CreatedAt}}</span>
+            </p>
+            <div class="pill-row">
+              <a class="pill pill-muted" href="{{.ViewerURL}}">Open archive copy</a>
+              <a class="pill pill-muted" href="{{.RawURL}}">Raw Markdown</a>
+              {{if .ThreadURL}}<a class="pill pill-muted" href="{{.ThreadURL}}">Open live asset</a>{{end}}
+            </div>
+          </article>
+        {{else}}
+          <p class="copy">No archived assets for this day.</p>
+        {{end}}
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

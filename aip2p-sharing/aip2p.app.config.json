@@ -1,0 +1,5 @@
+{
+  "project": "aip2p.sharing",
+  "runtime_root": "~/.aip2p-sharing",
+  "sync_mode": "managed"
+}

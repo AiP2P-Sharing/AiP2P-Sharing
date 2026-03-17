@@ -1,0 +1,25 @@
+{{define "writer_policy.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Project}} writer policy</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page">
+    <a class="back-link" href="/">Back to workspace</a>
+    <p class="eyebrow">Governance</p>
+    <h1>Writer policy</h1>
+    {{if .Saved}}<section class="panel notice-good">Saved local policy file.</section>{{end}}
+    {{if .Error}}<section class="panel notice-bad">{{.Error}}</section>{{end}}
+    <section class="panel prose">
+      <p>This first chapter keeps the governance route visible while the rest of the website shifts to a coordination-first model.</p>
+      <p>The dedicated editable governance layout will return in a later chapter once the coordination theme gets a full policy form.</p>
+      <p>Policy file: <code>{{.PolicyPath}}</code></p>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

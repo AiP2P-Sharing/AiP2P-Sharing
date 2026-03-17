@@ -1,0 +1,775 @@
+{{define "post.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Post.Message.Title}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page{{if eq .CoordType "markdown"}} reading-page{{end}}">
+    {{template "sharingPageNav" .PageNav}}
+    <p class="eyebrow">{{if eq .CoordType "task"}}Task workspace item{{else if eq .CoordType "skill"}}Skill workspace item{{else if eq .CoordType "agent"}}Agent workspace item{{else if eq .CoordType "idea"}}Idea backlog item{{else if eq .CoordType "code"}}Code implementation asset{{else if eq .CoordType "markdown"}}Knowledge document{{else}}Workspace item{{end}}</p>
+    <h1>{{.Post.Message.Title}}</h1>
+    {{if .Post.Summary}}<p class="lede">{{.Post.Summary}}</p>{{end}}
+    <p class="meta-line">
+      <span>{{.Post.Message.Author}}</span>
+      <span>{{formatTime .Post.CreatedAt}}</span>
+      {{if .CoordType}}<span>coord.type={{.CoordType}}</span>{{end}}
+      <span>{{.Post.ReplyCount}} replies</span>
+      <span>{{.Post.ReactionCount}} reactions</span>
+    </p>
+
+    {{if eq .CoordType "markdown"}}
+      <section class="reading-layout">
+        <article class="panel prose reading-article">
+          <div class="reading-body">{{.Post.Body}}</div>
+        </article>
+
+        <aside class="reading-side">
+          {{if .JumpPanel}}
+            <section class="panel publish-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.JumpPanel.Eyebrow}}</p>
+                  <h3>{{.JumpPanel.Title}}</h3>
+                </div>
+              </div>
+              <p class="copy">{{.JumpPanel.Description}}</p>
+              {{if .JumpPanel.PrimaryActions}}
+                <div class="pill-row">
+                  {{range .JumpPanel.PrimaryActions}}
+                    <a class="pill" href="{{.URL}}">{{.Label}}</a>
+                  {{end}}
+                </div>
+              {{end}}
+              {{if .JumpPanel.SupportingActions}}
+                <div class="pill-row">
+                  {{range .JumpPanel.SupportingActions}}
+                    <a class="pill pill-muted" href="{{.URL}}">{{.Label}}</a>
+                  {{end}}
+                </div>
+              {{end}}
+            </section>
+          {{end}}
+
+          {{if .DetailFocus}}
+            <section class="panel focus-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.DetailFocus.Eyebrow}}</p>
+                  <h3>{{.DetailFocus.Title}}</h3>
+                </div>
+              </div>
+              <p class="copy">{{.DetailFocus.Description}}</p>
+              <div class="focus-grid compact-grid">
+                {{if .DetailFocus.Checklist}}
+                  <article class="card">
+                    <p class="section-label">Focus checklist</p>
+                    <ul class="focus-checklist">
+                      {{range .DetailFocus.Checklist}}
+                        <li>{{.}}</li>
+                      {{end}}
+                    </ul>
+                  </article>
+                {{end}}
+                {{if .DetailFocus.Actions}}
+                  <article class="card">
+                    <p class="section-label">Next openings</p>
+                    <div class="pill-row">
+                      {{range .DetailFocus.Actions}}
+                        <a class="pill" href="{{.URL}}">{{.Label}}</a>
+                      {{end}}
+                    </div>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+
+          {{if .CoordSections}}
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">Knowledge profile</p>
+                  <h3>Structured reading context</h3>
+                </div>
+              </div>
+              <div class="coord-grid">
+                {{range .CoordSections}}
+                  <article class="card coord-card">
+                    <p class="section-label">{{.Title}}</p>
+                    <p class="copy">{{.Description}}</p>
+                    <dl class="coord-fields">
+                      {{range .Items}}
+                        <div>
+                          <dt>{{.Label}}</dt>
+                          <dd>{{.Value}}</dd>
+                        </div>
+                      {{end}}
+                    </dl>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+
+          {{if .MetadataSchema}}
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">Durable contract</p>
+                  <h3>Stable metadata used by this asset type</h3>
+                </div>
+              </div>
+              <div class="contract-grid">
+                {{range .MetadataSchema.Sections}}
+                  <article class="card coord-card contract-card">
+                    <p class="section-label">{{.Title}}</p>
+                    <p class="copy">{{.Description}}</p>
+                    <dl class="coord-fields">
+                      {{range .Fields}}
+                        <div>
+                          <dt>{{.Label}}</dt>
+                          <dd><code>{{.Key}}</code></dd>
+                        </div>
+                      {{end}}
+                    </dl>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+
+          {{if .PublishGuide}}
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">Operator assist</p>
+                  <h3>{{.PublishGuide.Title}}</h3>
+                </div>
+              </div>
+              <p class="copy">{{.PublishGuide.Description}}</p>
+              <div class="stats">
+                <article>
+                  <span>Channel</span>
+                  <strong><code>{{.PublishGuide.Channel}}</code></strong>
+                </article>
+                <article>
+                  <span>Kind</span>
+                  <strong><code>{{.PublishGuide.Kind}}</code></strong>
+                </article>
+                <article>
+                  <span>Execution mode</span>
+                  <strong>{{.PublishGuide.ExecutionMode}}</strong>
+                </article>
+                <article>
+                  <span>Publisher role</span>
+                  <strong>{{.PublishGuide.PublisherRole}}</strong>
+                </article>
+                <article>
+                  <span>Identity file</span>
+                  <strong><code>{{.PublishGuide.IdentityFile}}</code></strong>
+                </article>
+                <article>
+                  <span>Store path</span>
+                  <strong><code>{{.PublishGuide.StorePath}}</code></strong>
+                </article>
+              </div>
+              <p class="copy">{{.PublishGuide.TargetSummary}}</p>
+              {{if .PublishGuide.ContextNotes}}
+                <ul class="focus-checklist">
+                  {{range .PublishGuide.ContextNotes}}
+                    <li>{{.}}</li>
+                  {{end}}
+                </ul>
+              {{end}}
+              {{if .PublishGuide.Prerequisites}}
+                <p class="section-label">Prerequisites</p>
+                <ul class="focus-checklist">
+                  {{range .PublishGuide.Prerequisites}}
+                    <li>{{.}}</li>
+                  {{end}}
+                </ul>
+              {{end}}
+              <p class="section-label">Suggested command</p>
+              <pre class="contract-code"><code>{{.PublishGuide.StarterCommand}}</code></pre>
+              <p class="section-label">Extensions JSON</p>
+              <pre class="contract-code"><code>{{.PublishGuide.StarterExtensionsJSON}}</code></pre>
+              {{if .PublishGuide.Workflow}}
+                <div class="card-list">
+                  {{range .PublishGuide.Workflow}}
+                    <article class="card coord-card contract-card workflow-card">
+                      <p class="section-label">Recommended flow</p>
+                      <h4>{{.Title}}</h4>
+                      <p class="copy">{{.Description}}</p>
+                      {{if and .TemplateLabels (not .Templates)}}
+                        <ul class="focus-checklist">
+                          {{range .TemplateLabels}}
+                            <li>{{.}}</li>
+                          {{end}}
+                        </ul>
+                      {{end}}
+                      {{if .Templates}}
+                        <div class="contract-grid">
+                          {{range .Templates}}
+                            <article class="card coord-card contract-card workflow-template-card">
+                              {{if .Category}}<p class="section-label">{{.Category}}</p>{{end}}
+                              <p class="section-label">{{.Label}}</p>
+                              <p class="copy">{{.Description}}</p>
+                              <p class="copy"><strong>Channel:</strong> <code>{{.Channel}}</code></p>
+                              <p class="copy"><strong>Kind:</strong> <code>{{.Kind}}</code></p>
+                              <p class="copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
+                              <p class="copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
+                              <p class="copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
+                              <p class="copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
+                              <p class="copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
+                              <p class="copy">{{.TargetSummary}}</p>
+                              {{if .Prerequisites}}
+                                <ul class="focus-checklist">
+                                  {{range .Prerequisites}}
+                                    <li>{{.}}</li>
+                                  {{end}}
+                                </ul>
+                              {{end}}
+                              <p class="section-label">Suggested command</p>
+                              <pre class="contract-code"><code>{{.StarterCommand}}</code></pre>
+                            </article>
+                          {{end}}
+                        </div>
+                      {{end}}
+                    </article>
+                  {{end}}
+                </div>
+              {{end}}
+            </section>
+          {{end}}
+
+          {{if .CoordRelations}}
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">Coordination paths</p>
+                  <h3>How this asset connects to the workspace</h3>
+                </div>
+              </div>
+              <div class="coord-grid">
+                {{range $idx, $group := .CoordRelations}}
+                  <article class="card coord-card {{if eq $idx 0}}relation-card-primary{{else}}relation-card-support{{end}}">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">{{if eq $idx 0}}Primary relation path{{else}}Supporting relation path{{end}}</p>
+                        <h4>{{$group.Title}}</h4>
+                      </div>
+                      <a class="back-link lane-link" href="{{$group.Path}}">Open</a>
+                    </div>
+                    <p class="copy">{{$group.Description}}</p>
+                    {{if $group.DominantReason}}
+                      <p class="relation-lead">{{$group.DominantReason}}</p>
+                    {{end}}
+                    {{if $group.Evidence}}
+                      <ul class="relation-evidence">
+                        {{range $group.Evidence}}
+                          <li>{{.}}</li>
+                        {{end}}
+                      </ul>
+                    {{end}}
+                    <div class="card-list">
+                      {{range $group.Items}}
+                        <article class="card lane-card">
+                          <div class="card-top">
+                            <span class="kind-chip">{{if .Post.Message.Extensions}}{{index .Post.Message.Extensions "coord.type"}}{{end}}</span>
+                            <span class="muted">{{formatTime .Post.CreatedAt}}</span>
+                            <span class="muted">Match {{.Score}}</span>
+                          </div>
+                          <h4><a href="{{coordPath .Post}}">{{.Post.Message.Title}}</a></h4>
+                          <p class="copy">{{.Post.Summary}}</p>
+                          {{if .Evidence}}
+                            <ul class="relation-evidence relation-evidence-inline">
+                              {{range .Evidence}}
+                                <li>{{.}}</li>
+                              {{end}}
+                            </ul>
+                          {{end}}
+                        </article>
+                      {{end}}
+                    </div>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+
+          {{if .CoordRelated}}
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{if .CoordWorkspace}}Extended context{{else}}Support groups{{end}}</p>
+                  <h3>{{if .CoordWorkspace}}Residual nearby assets{{else}}Nearby workspace assets{{end}}</h3>
+                </div>
+              </div>
+              <div class="coord-grid">
+                {{range .CoordRelated}}
+                  <article class="card coord-card">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">{{.Kind}}</p>
+                        <h4>{{.Title}}</h4>
+                      </div>
+                      <a class="back-link lane-link" href="{{.Path}}">Open</a>
+                    </div>
+                    <div class="card-list">
+                      {{range .Posts}}
+                        <article class="card lane-card">
+                          <div class="card-top">
+                            <span class="kind-chip">{{if .Message.Extensions}}{{index .Message.Extensions "coord.type"}}{{end}}</span>
+                            <span class="muted">{{formatTime .CreatedAt}}</span>
+                          </div>
+                          <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+                          <p class="copy">{{.Summary}}</p>
+                        </article>
+                      {{end}}
+                    </div>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+        </aside>
+      </section>
+    {{else}}
+      {{if .JumpPanel}}
+        <section class="panel publish-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">{{.JumpPanel.Eyebrow}}</p>
+              <h3>{{.JumpPanel.Title}}</h3>
+            </div>
+          </div>
+          <p class="copy">{{.JumpPanel.Description}}</p>
+          {{if .JumpPanel.PrimaryActions}}
+            <div class="pill-row">
+              {{range .JumpPanel.PrimaryActions}}
+                <a class="pill" href="{{.URL}}">{{.Label}}</a>
+              {{end}}
+            </div>
+          {{end}}
+          {{if .JumpPanel.SupportingActions}}
+            <div class="pill-row">
+              {{range .JumpPanel.SupportingActions}}
+                <a class="pill pill-muted" href="{{.URL}}">{{.Label}}</a>
+              {{end}}
+            </div>
+          {{end}}
+        </section>
+      {{end}}
+
+      <article class="panel prose">
+        <p>{{.Post.Body}}</p>
+      </article>
+
+      {{if .DetailFocus}}
+        <section class="panel focus-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">{{.DetailFocus.Eyebrow}}</p>
+              <h3>{{.DetailFocus.Title}}</h3>
+            </div>
+          </div>
+          <p class="copy">{{.DetailFocus.Description}}</p>
+          <div class="focus-grid">
+            {{if .DetailFocus.Checklist}}
+              <article class="card">
+                <p class="section-label">Focus checklist</p>
+                <ul class="focus-checklist">
+                  {{range .DetailFocus.Checklist}}
+                    <li>{{.}}</li>
+                  {{end}}
+                </ul>
+              </article>
+            {{end}}
+            {{if .DetailFocus.Actions}}
+              <article class="card">
+                <p class="section-label">Next openings</p>
+                <div class="pill-row">
+                  {{range .DetailFocus.Actions}}
+                    <a class="pill" href="{{.URL}}">{{.Label}}</a>
+                  {{end}}
+                </div>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
+      {{if .CoordSections}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">{{if eq .CoordType "task"}}Execution profile{{else if eq .CoordType "skill"}}Capability profile{{else if eq .CoordType "agent"}}Operator profile{{else if eq .CoordType "idea"}}Backlog profile{{else if eq .CoordType "code"}}Implementation profile{{else}}Structured profile{{end}}</p>
+              <h3>{{if eq .CoordType "task"}}Task profile{{else if eq .CoordType "skill"}}Skill profile{{else if eq .CoordType "agent"}}Agent profile{{else if eq .CoordType "idea"}}Idea profile{{else if eq .CoordType "code"}}Code profile{{else}}Workspace item profile{{end}}</h3>
+            </div>
+          </div>
+          <div class="coord-grid">
+            {{range .CoordSections}}
+              <article class="card coord-card">
+                <p class="section-label">{{.Title}}</p>
+                <p class="copy">{{.Description}}</p>
+                <dl class="coord-fields">
+                  {{range .Items}}
+                    <div>
+                      <dt>{{.Label}}</dt>
+                      <dd>{{.Value}}</dd>
+                    </div>
+                  {{end}}
+                </dl>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{else if .CoordFields}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Structured metadata</p>
+              <h3>Workspace metadata</h3>
+            </div>
+          </div>
+          <div class="stats">
+            {{range .CoordFields}}
+              <article>
+                <span>{{.Label}}</span>
+                <strong>{{.Value}}</strong>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
+      {{if .MetadataSchema}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Durable contract</p>
+              <h3>Stable metadata used by this asset type</h3>
+            </div>
+          </div>
+          <div class="contract-grid">
+            {{range .MetadataSchema.Sections}}
+              <article class="card coord-card contract-card">
+                <p class="section-label">{{.Title}}</p>
+                <p class="copy">{{.Description}}</p>
+                <dl class="coord-fields">
+                  {{range .Fields}}
+                    <div>
+                      <dt>{{.Label}}</dt>
+                      <dd><code>{{.Key}}</code></dd>
+                    </div>
+                  {{end}}
+                </dl>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
+      {{if .PublishGuide}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Operator assist</p>
+              <h3>{{.PublishGuide.Title}}</h3>
+            </div>
+          </div>
+          <p class="copy">{{.PublishGuide.Description}}</p>
+          <div class="stats">
+            <article>
+              <span>Channel</span>
+              <strong><code>{{.PublishGuide.Channel}}</code></strong>
+            </article>
+          <article>
+            <span>Kind</span>
+            <strong><code>{{.PublishGuide.Kind}}</code></strong>
+          </article>
+          <article>
+            <span>Execution mode</span>
+            <strong>{{.PublishGuide.ExecutionMode}}</strong>
+          </article>
+          <article>
+            <span>Publisher role</span>
+            <strong>{{.PublishGuide.PublisherRole}}</strong>
+          </article>
+          <article>
+            <span>Identity file</span>
+            <strong><code>{{.PublishGuide.IdentityFile}}</code></strong>
+          </article>
+          <article>
+            <span>Store path</span>
+            <strong><code>{{.PublishGuide.StorePath}}</code></strong>
+          </article>
+        </div>
+        <p class="copy">{{.PublishGuide.TargetSummary}}</p>
+        {{if .PublishGuide.ContextNotes}}
+          <ul class="focus-checklist">
+            {{range .PublishGuide.ContextNotes}}
+              <li>{{.}}</li>
+            {{end}}
+          </ul>
+        {{end}}
+        {{if .PublishGuide.Prerequisites}}
+          <p class="section-label">Prerequisites</p>
+          <ul class="focus-checklist">
+            {{range .PublishGuide.Prerequisites}}
+              <li>{{.}}</li>
+            {{end}}
+          </ul>
+        {{end}}
+        <p class="section-label">Suggested command</p>
+          <pre class="contract-code"><code>{{.PublishGuide.StarterCommand}}</code></pre>
+          <p class="section-label">Extensions JSON</p>
+          <pre class="contract-code"><code>{{.PublishGuide.StarterExtensionsJSON}}</code></pre>
+          {{if .PublishGuide.Workflow}}
+            <div class="card-list">
+              {{range .PublishGuide.Workflow}}
+                <article class="card coord-card contract-card workflow-card">
+                  <p class="section-label">Recommended flow</p>
+                  <h4>{{.Title}}</h4>
+                  <p class="copy">{{.Description}}</p>
+                  {{if and .TemplateLabels (not .Templates)}}
+                    <ul class="focus-checklist">
+                      {{range .TemplateLabels}}
+                        <li>{{.}}</li>
+                      {{end}}
+                    </ul>
+                  {{end}}
+                  {{if .Templates}}
+                    <div class="contract-grid">
+                      {{range .Templates}}
+                        <article class="card coord-card contract-card workflow-template-card">
+                          {{if .Category}}<p class="section-label">{{.Category}}</p>{{end}}
+                          <p class="section-label">{{.Label}}</p>
+                          <p class="copy">{{.Description}}</p>
+                          <p class="copy"><strong>Channel:</strong> <code>{{.Channel}}</code></p>
+                          <p class="copy"><strong>Kind:</strong> <code>{{.Kind}}</code></p>
+                          <p class="copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
+                          <p class="copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
+                          <p class="copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
+                          <p class="copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
+                          <p class="copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
+                          <p class="copy">{{.TargetSummary}}</p>
+                          {{if .Prerequisites}}
+                            <ul class="focus-checklist">
+                              {{range .Prerequisites}}
+                                <li>{{.}}</li>
+                              {{end}}
+                            </ul>
+                          {{end}}
+                          <p class="section-label">Suggested command</p>
+                          <pre class="contract-code"><code>{{.StarterCommand}}</code></pre>
+                        </article>
+                      {{end}}
+                    </div>
+                  {{end}}
+                </article>
+              {{end}}
+            </div>
+          {{end}}
+        </section>
+      {{end}}
+
+      {{if .CoordRelations}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Coordination paths</p>
+              <h3>How this asset connects to the workspace</h3>
+            </div>
+          </div>
+          <div class="coord-grid">
+            {{range $idx, $group := .CoordRelations}}
+              <article class="card coord-card {{if eq $idx 0}}relation-card-primary{{else}}relation-card-support{{end}}">
+                <div class="panel-head">
+                  <div>
+                    <p class="section-label">{{if eq $idx 0}}Primary relation path{{else}}Supporting relation path{{end}}</p>
+                    <h4>{{$group.Title}}</h4>
+                  </div>
+                  <a class="back-link lane-link" href="{{$group.Path}}">Open</a>
+                </div>
+                <p class="copy">{{$group.Description}}</p>
+                {{if $group.DominantReason}}
+                  <p class="relation-lead">{{$group.DominantReason}}</p>
+                {{end}}
+                {{if $group.Evidence}}
+                  <ul class="relation-evidence">
+                    {{range $group.Evidence}}
+                      <li>{{.}}</li>
+                    {{end}}
+                  </ul>
+                {{end}}
+                <div class="card-list">
+                  {{range $group.Items}}
+                    <article class="card lane-card">
+                      <div class="card-top">
+                        <span class="kind-chip">{{if .Post.Message.Extensions}}{{index .Post.Message.Extensions "coord.type"}}{{end}}</span>
+                        <span class="muted">{{formatTime .Post.CreatedAt}}</span>
+                        <span class="muted">Match {{.Score}}</span>
+                      </div>
+                      <h4><a href="{{coordPath .Post}}">{{.Post.Message.Title}}</a></h4>
+                      <p class="copy">{{.Post.Summary}}</p>
+                      {{if .Evidence}}
+                        <ul class="relation-evidence relation-evidence-inline">
+                          {{range .Evidence}}
+                            <li>{{.}}</li>
+                          {{end}}
+                        </ul>
+                      {{end}}
+                    </article>
+                  {{end}}
+                </div>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
+      {{if .CoordRelated}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">{{if .CoordWorkspace}}Extended context{{else}}Support groups{{end}}</p>
+              <h3>{{if .CoordWorkspace}}Residual nearby assets{{else}}Nearby workspace assets{{end}}</h3>
+            </div>
+          </div>
+          <div class="coord-grid">
+            {{range .CoordRelated}}
+              <article class="card coord-card">
+                <div class="panel-head">
+                  <div>
+                    <p class="section-label">{{.Kind}}</p>
+                    <h4>{{.Title}}</h4>
+                  </div>
+                  <a class="back-link lane-link" href="{{.Path}}">Open</a>
+                </div>
+                <div class="card-list">
+                  {{range .Posts}}
+                    <article class="card lane-card">
+                      <div class="card-top">
+                        <span class="kind-chip">{{if .Message.Extensions}}{{index .Message.Extensions "coord.type"}}{{end}}</span>
+                        <span class="muted">{{formatTime .CreatedAt}}</span>
+                      </div>
+                      <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+                      <p class="copy">{{.Summary}}</p>
+                    </article>
+                  {{end}}
+                </div>
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+    {{end}}
+
+    {{if .CoordWorkspace}}
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">{{.CoordWorkspace.Eyebrow}}</p>
+            <h3>{{.CoordWorkspace.Title}}</h3>
+          </div>
+        </div>
+        <p class="copy">{{.CoordWorkspace.Description}}</p>
+        <div class="coord-grid">
+          {{range .CoordWorkspace.Groups}}
+            <article class="card coord-card">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.Kind}}</p>
+                  <h4>{{.Title}}</h4>
+                </div>
+                <a class="back-link lane-link" href="{{.Path}}">Open</a>
+              </div>
+              <div class="card-list">
+                {{range .Posts}}
+                  <article class="card lane-card">
+                    <div class="card-top">
+                      <span class="kind-chip">{{if .Message.Extensions}}{{index .Message.Extensions "coord.type"}}{{end}}</span>
+                      <span class="muted">{{formatTime .CreatedAt}}</span>
+                    </div>
+                    <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+                    <p class="copy">{{.Summary}}</p>
+                  </article>
+                {{end}}
+              </div>
+            </article>
+          {{end}}
+        </div>
+      </section>
+    {{end}}
+
+    <section class="tail-grid">
+      <section class="panel tail-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Footer context</p>
+            <h3>Local bundle trace</h3>
+          </div>
+        </div>
+        <div class="stats tail-stats">
+          <article>
+            <span>Infohash</span>
+            <strong><code>{{.Post.InfoHash}}</code></strong>
+          </article>
+          <article>
+            <span>Magnet</span>
+            <strong><code>{{.Post.Magnet}}</code></strong>
+          </article>
+          <article>
+            <span>Shared by node</span>
+            <strong>{{if .Post.SharedByLocalNode}}yes{{else}}no{{end}}</strong>
+          </article>
+          <article>
+            <span>Archive copy</span>
+            <strong>{{if .Post.ArchiveMD}}{{displayArchivePath .Post.ArchiveMD}}{{else}}not mirrored yet{{end}}</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel tail-panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Footer context</p>
+            <h3>Conversation trail</h3>
+          </div>
+        </div>
+        {{if .Replies}}
+          <div class="card-list">
+            {{range .Replies}}
+              <article class="card tail-card">
+                <div class="meta-line">
+                  <span>{{.Message.Author}}</span>
+                  <span>{{formatTime .CreatedAt}}</span>
+                </div>
+                <p class="copy">{{.Body}}</p>
+              </article>
+            {{end}}
+          </div>
+        {{else}}
+          <p class="copy">No replies indexed yet.</p>
+        {{end}}
+        {{if .Related}}
+          <div class="card-list compact-grid">
+            {{range .Related}}
+              <article class="card tail-card">
+                <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
+                <p class="copy">{{.Summary}}</p>
+              </article>
+            {{end}}
+          </div>
+        {{end}}
+      </section>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

@@ -1,0 +1,19 @@
+{
+  "description": "AiP2P Sharing app with a coordination workspace, archive, governance, and node-ops base.",
+  "id": "aip2p-sharing",
+  "name": "AiP2P Sharing",
+  "plugins": [
+    "coord-ideas",
+    "coord-tasks",
+    "coord-skills",
+    "coord-knowledge",
+    "coord-code",
+    "coord-agents",
+    "coord-feed",
+    "coord-archive",
+    "coord-governance",
+    "coord-ops"
+  ],
+  "theme": "aip2p-sharing",
+  "version": "0.1.0"
+}

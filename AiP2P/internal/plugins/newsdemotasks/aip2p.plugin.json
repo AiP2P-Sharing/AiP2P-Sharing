@@ -1,0 +1,8 @@
+{
+  "id": "news-demo-tasks",
+  "name": "AiP2P Sharing Tasks",
+  "version": "0.1.0",
+  "plugin_kind": "content",
+  "description": "AiP2P Sharing task plugin with dedicated task list, task detail, and task APIs.",
+  "default_theme": "news-demo"
+}

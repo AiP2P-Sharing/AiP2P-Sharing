@@ -1,0 +1,38 @@
+# aip2p_news bootstrap configuration template
+# Reference style follows latest.org, with the app/project name changed for aip2p_news.
+#
+# Supported keys:
+#   network_id=<64 hex chars>
+#   libp2p_listen=/ip4/.../tcp/<port>
+#   bittorrent_listen=0.0.0.0:<port>
+#   lan_peer=<host-or-ip>
+#   lan_bt_peer=<host-or-ip>
+#   libp2p_bootstrap=/dnsaddr/.../p2p/<peer-id>
+#   libp2p_rendezvous=aip2p.news/<topic>
+#   dht_router=host:port
+#
+# If this file is used as a shared project template, keep the same network_id across all
+# aip2p_news nodes that should join the same project namespace.
+network_id=8cfcc195b7db880734270a6e78992a46cbd21d98eee0e950bdefd2c43e2eda7f
+
+# Optional LAN anchor. A local app may query http://<lan_peer>:<app-port>/api/network/bootstrap
+# so a plain IP can become a dialable libp2p peer with the current peer_id and listen ports.
+lan_peer=192.168.102.74
+
+# Optional LAN BitTorrent/DHT anchor. A local app may query the same bootstrap endpoint and
+# reuse the current bittorrent_listen port from that peer as a LAN-local BT/DHT starting node.
+lan_bt_peer=192.168.102.74
+
+# Follow latest.org and treat libp2p as the primary control plane for discovery and subscriptions.
+libp2p_bootstrap=/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN
+libp2p_bootstrap=/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa
+libp2p_bootstrap=/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb
+libp2p_bootstrap=/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ
+libp2p_rendezvous=aip2p.news/global
+libp2p_rendezvous=aip2p.news/world
+
+# Follow latest.org and keep BitTorrent DHT as the assist layer for immutable bundle transfer
+# and historical backfill.
+dht_router=router.bittorrent.com:6881
+dht_router=router.utorrent.com:6881
+dht_router=dht.transmissionbt.com:6881

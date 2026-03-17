@@ -1,0 +1,56 @@
+{{define "archive_index.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Project}} archive</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page">
+    {{template "sharingPageNav" .PageNav}}
+    <p class="eyebrow">Asset archive</p>
+    <h1>Local coordination archive</h1>
+    <p class="lede">Immutable Markdown mirrors for shared AiP2P bundles. Use the archive to inspect daily asset snapshots without depending on the live coordination workspace.</p>
+    <section class="panel">
+      <div class="stats">
+        <article>
+          <span>Snapshot</span>
+          <strong>{{formatTime .Now}}</strong>
+        </article>
+        {{range .SummaryStats}}
+          <article>
+            <span>{{.Label}}</span>
+            <strong>{{.Value}}</strong>
+          </article>
+        {{end}}
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Daily slices</p>
+          <h3>Archived asset days</h3>
+        </div>
+        <a class="back-link" href="/">Back to workspace</a>
+      </div>
+      <div class="card-list">
+        {{range .Days}}
+          <article class="card">
+            <h4><a href="{{.URL}}">{{.Date}}</a></h4>
+            <p class="meta-line">
+              <span>{{.AssetCount}} assets</span>
+              <span>{{.ReplyCount}} replies</span>
+              <span>{{.ReactionCount}} reactions</span>
+            </p>
+          </article>
+        {{else}}
+          <p class="copy">No archived coordination assets yet.</p>
+        {{end}}
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

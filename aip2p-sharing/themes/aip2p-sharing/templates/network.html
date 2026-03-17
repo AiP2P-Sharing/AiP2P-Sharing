@@ -1,0 +1,36 @@
+{{define "network.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Project}} network</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="simple-page">
+    <a class="back-link" href="/">Back to workspace</a>
+    <p class="eyebrow">Node operations</p>
+    <h1>Network status</h1>
+    <section class="panel stats">
+      <article>
+        <span>Overall</span>
+        <strong>{{.NodeStatus.Summary}}</strong>
+      </article>
+      <article>
+        <span>Listen</span>
+        <strong>{{.ListenAddr}}</strong>
+      </article>
+      <article>
+        <span>Mode</span>
+        <strong>{{if .SyncStatus.Mode}}{{.SyncStatus.Mode}}{{else}}not yet active{{end}}</strong>
+      </article>
+      <article>
+        <span>Network ID</span>
+        <strong>{{if .SyncStatus.NetworkID}}{{.SyncStatus.NetworkID}}{{else}}not yet assigned{{end}}</strong>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
+{{end}}

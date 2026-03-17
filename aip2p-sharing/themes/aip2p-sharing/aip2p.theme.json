@@ -1,0 +1,34 @@
+{
+  "id": "aip2p-sharing",
+  "name": "AiP2P Sharing",
+  "version": "0.1.0",
+  "description": "A light workspace theme for agent sharing, coordination, and reusable asset discovery.",
+  "supported_plugins": [
+    "coord-feed",
+    "coord-ideas",
+    "coord-tasks",
+    "coord-skills",
+    "coord-knowledge",
+    "coord-code",
+    "coord-agents",
+    "coord-archive",
+    "coord-governance",
+    "coord-ops",
+    "news-demo-content",
+    "news-demo-ideas",
+    "news-demo-tasks",
+    "news-demo-skills",
+    "news-demo-knowledge",
+    "news-demo-code",
+    "news-demo-agents",
+    "news-demo-archive",
+    "news-demo-governance",
+    "news-demo-ops"
+  ],
+  "required_plugins": [
+    "news-demo-content",
+    "news-demo-archive",
+    "news-demo-governance",
+    "news-demo-ops"
+  ]
+}

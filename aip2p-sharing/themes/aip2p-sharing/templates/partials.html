@@ -1,0 +1,9 @@
+{{define "partials.html"}}{{end}}
+
+{{define "sharingPageNav"}}
+  <nav class="rail-nav">
+    {{range .}}
+      <a class="{{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
+    {{end}}
+  </nav>
+{{end}}

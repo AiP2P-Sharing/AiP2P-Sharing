@@ -1,0 +1,678 @@
+
+### AiP2P 项目优化方案书 · 总目录（v0.3 目标版）
+
+**前言**  
+0. 项目定位与核心哲学回顾  
+1. 当前状态评估（基于 v0.2.5.1.3 仓库结构、功能、文档）
+
+**第一部分：基础层（协议与核心机制）**  
+2. 消息协议与数据格式（v0.3 升级）  
+3. Bundle 与内容分发机制  
+4. 身份、签名与信任模型（明文优先下的安全扩展）
+
+**第二部分：网络与发现层**  
+5. 发现与连接可靠性（bootstrap、DHT、mDNS、circuit relay）  
+6. 订阅、同步与 mutable feed-head  
+7. 网络隔离与多网络共存
+
+**第三部分：运行时与扩展系统**  
+8. Host 与 CLI 运行时（serve、sync、config 统一）  
+9. Plugin 系统（加载、开发、安装规范）  
+10. Theme 系统（渲染与输出样式）  
+11. App 系统（应用工作空间、aip2p.app.config.json、create app）
+
+**第四部分：开发者与 Agent 体验**  
+12. 配置与环境管理（~/.aip2p/config.json 标准化）  
+13. 本地 API（localhost HTTP/gRPC 接口）  
+14. SDK 与客户端支持（Python、JS wrapper 规划）  
+15. 可观测性与调试工具（metrics、日志、inspect 命令）
+
+**第五部分：示例、测试与文档**  
+16. 官方示例应用整改（news-demo、task-delegation 等）  
+17. 测试套件与端到端验证  
+18. 文档体系重构（protocol、apps、plugins、themes 指南）
+
+**第六部分：生态与长期演进**  
+19. 桥接外部 Agent 框架（OpenClaw、Auto-GPT、LangGraph 等）  
+20. 插件/主题/应用市场雏形  
+21. 推广、社区与反馈循环  
+22. 未来路线图（v0.4+：附件、能力发现、加密层、可选 PoW 等）
+
+**附录**  
+A. 当前仓库目录结构快照（整改前）  
+B. 整改后推荐仓库目录结构  
+C. 版本升级与兼容策略  
+D. 变更日志模板
+
+这个总目录把项目拆分成逻辑清晰的“章节”，覆盖从底层协议到上层生态的全栈优化。每章都可以独立细化，但整体保持连贯性（前面的章节是后面章节的基础）。
+
+**现在我们可以开始一章一章写了。**
+
+你想先从哪一章开始细化？  
+推荐顺序建议（从基础到上层）：  
+- 先 **第1章**（当前状态评估） → 作为基准  
+- 然后 **第2章**（消息协议） → 最核心的价值点  
+- 或直接跳到你最关心的，比如 **第11章**（App 系统整改）  
+- 或者 **第0章**（定位回顾）先统一定调
+
+告诉我章节编号或标题，我们就开始写那一章的详细内容（子章节 + 现状 + 优化方案等）。
+
+
+
+好的，我们按照你给的总目录顺序，一章一章来写。
+
+从 **前言** 开始，逐步往下推进。每章我会尽量写得完整、自成一体，但保持简洁，便于你后续修改、补充或作为设计文档使用。
+
+### 前言
+
+#### 0. 项目定位与核心哲学回顾
+
+**项目全称**：AiP2P  
+**一句话定位**：一个极简、纯 P2P、明文优先的通信层，专为 AI Agent 之间直接共享上下文、任务、结果、记忆而设计。
+
+**核心哲学（不变的底线）**：
+1. **完全去中心化**：无中央服务器、无中继、无数据库、无账号系统。Agent 之间直接连接、直接交换。
+2. **明文优先 + 人类可读**：所有消息默认是清晰的纯文本或结构化 JSON，易调试、易审计、易扩展。不强制二进制、不隐藏细节。
+3. **极低门槛**：零配置或极少配置就能加入网络，几行命令或一条 API 调用就能发布/订阅内容。
+4. **本地优先（local-first）**：每个节点拥有完整数据副本，同步是可选增强功能。
+5. **安全性取舍明确**：基础版不以隐私/加密为核心目标，而是优先透明、可观测、可复用。需要强安全时，可在协议扩展层自行添加（签名是可选强制，加密是未来可选）。
+6. **专为 Agent 而非人**：设计焦点是 Agent ? Agent 的工作流（传中间结果、子任务、能力公告、错误报告），而非人类聊天或社交。
+
+**当前最核心的价值主张**（2026 年 3 月）：
+在多 Agent 系统实验和小型协作场景中，提供一个“没有云、没有 API 密钥、没有复杂依赖”的通信底座，让研究者、开发者、爱好者能快速验证“多个 Agent 互相协作”的想法，而不被基础设施拖后腿。
+
+#### 1. 当前状态评估（基于 v0.2.5.1.3）
+
+**已实现的核心功能**：
+- libp2p 基础网络（DHT + pubsub + mDNS）
+- 消息格式（JSON + body 纯文本 + extensions）
+- 签名支持（强制或可选）
+- Bundle 打包（message.json + body.txt → infohash → magnet 链接）
+- CLI 工具：publish、verify、show、sync、serve
+- 守护进程同步（订阅 topic、公告 magnet、拉取 bundle）
+- 网络隔离（256 bit network_id）
+- 插件/主题/应用加载机制（--app-dir、create plugin 等）
+- 示例：news-demo 系列（content、governance、archive、ops）
+
+**已有的亮点**：
+- 协议文档化（schema.json、部分 protocol-v0.1 说明）
+- 明文 + 本地文件存储，调试友好
+- Go 实现，跨平台 release
+- 活跃维护（近期 v0.2.5.1.3 发布）
+
+**当前主要短板 / 痛点**（按严重程度排序）：
+1. 配置碎片化：大量参数靠命令行 flag，缺少统一配置文件。
+2. 协议细节不完整：reply 链缺少作者/时间引用；kind 种类太少；无标准能力公告格式；body 格式单一。
+3. 发现与冷启动体验差：bootstrap 节点依赖手动或少量公共；mutable feed-head 未实现，难以快速找到最新内容。
+4. 扩展系统文档与示例不足：plugin/theme/app 的开发流程、规范、模板不清晰。
+5. Agent 集成门槛高：目前主要靠 subprocess CLI 调用，缺少本地 API 或 SDK。
+6. 缺少端到端测试与多 Agent 协作 demo。
+7. 文档分散：protocol、CLI、扩展系统说明散落在不同地方。
+8. 安全性扩展路径不明确（加密、信任锚、防 spam 机制缺失）。
+9. 生态起步慢：缺少外部框架桥接、插件市场雏形。
+
+**总体成熟度评估**（2026 年 3 月）：
+- 原型阶段 → 可运行的小规模实验（LAN 内 5–20 个 Agent）
+- 距离“可日常使用的小型多 Agent 协作底座”还差 2–3 个迭代
+- 距离“成为 AI Agent P2P 事实基础设施”还需生态建设
+
+**接下来章节将针对以上痛点，逐层提出优化方案。**
+
+---
+
+**结束前言部分。**
+
+**下一章要开始写第 2 章：消息协议与数据格式（v0.3 升级）** 吗？
+
+还是你想先修改/补充前言部分的内容（比如定位描述、哲学排序、当前状态的痛点权重等）？
+
+告诉我，我们继续按顺序往下写。
+
+
+好的，我们继续按顺序写下一章。
+
+### 第一部分：基础层（协议与核心机制）
+
+#### 2. 消息协议与数据格式（v0.3 升级）
+
+**现状回顾（v0.2.5.1.3 版本）**  
+- 消息格式主要定义在 aip2p-message.schema.json  
+- 核心字段包括：  
+  - id / infohash / magnet  
+  - author（agent:// URI）  
+  - kind（目前主要 post / reply / note）  
+  - channel / title / body / created_at  
+  - extensions（任意键值对）  
+  - signature（可选或强制，取决于 allow_unsigned）  
+- body 是纯文本（body.txt），bundle 内有 message.json + body.txt  
+- reply_to 只包含 infohash + magnet（缺少直接的作者/时间引用）  
+- extensions 非常自由，但缺少约定俗成的标准字段，导致 Agent 间协作时需要大量自定义解析逻辑  
+
+**当前主要问题**  
+1. reply 链不完整，难以快速构建线程视图或追踪对话历史  
+2. kind 种类太少，无法表达常见的 Agent 协作语义（任务分配、结果返回、能力公告等）  
+3. body 格式单一（纯文本），不利于 Agent 输出结构化内容（JSON、markdown、表格等）  
+4. 能力/上下文/任务相关的元数据没有标准位置，全部塞 extensions 导致碎片化  
+5. 协议版本升级机制缺失，未来字段增加时兼容性差  
+
+**v0.3 升级目标**  
+- 让消息协议更“语义友好”，支持典型的 Agent-to-Agent 交互模式  
+- 保持明文 + 人类可读原则不变  
+- 最小化破坏性变更（兼容 v0.2 消息，但新增字段为可选）  
+- 为后续能力发现、任务协作、附件等铺路  
+
+**优化方案要点**  
+
+1. **消息 kind 标准化（推荐集合）**  
+   定义一组核心 kind，作为 v0.3 的“最小约定”：  
+   - post：普通发布（原有）  
+   - reply：回复（原有）  
+   - task-assign：分配子任务  
+   - task-result：返回子任务执行结果  
+   - task-update：任务状态更新（进行中/暂停/取消）  
+   - capability-announce：宣布自身能力（模型、工具、响应速度等）  
+   - memory-share：分享记忆片段（短期上下文、长期知识）  
+   - error-report：报告执行错误或异常  
+   - ping / pong：简单心跳或在线探测（可选，低优先）  
+
+   这些 kind 写入协议文档，作为“推荐使用”，但不强制（允许自定义 kind）。
+
+2. **reply 链完整性增强**  
+   在 reply_to 对象中新增两个字段（可选，但强烈推荐）：  
+   - reply_to.author：被回复消息的作者（agent:// URI）  
+   - reply_to.created_at：被回复消息的创建时间（ISO 8601 格式）  
+
+   好处：接收方无需拉取完整历史，就能快速判断线程关系、排序、过滤。
+
+3. **body 格式柔性支持**  
+   在 extensions 中新增两个标准字段：  
+   - content_type：默认 text/plain，支持 text/markdown、application/json、text/csv 等  
+   - body_encoding：默认 utf-8，支持 base64（当 body 过大或含二进制时）  
+   - body_file：当 body 内容放到 bundle 的独立文件时，填写文件名（例如 "body.md" 或 "result.json"）  
+
+   这样 body 字段本身可以留空或放摘要，实际内容放 bundle 里，保持 bundle 结构清晰。
+
+4. **标准化 extensions 键（推荐前缀）**  
+   建议 extensions 里使用命名空间前缀，避免冲突：  
+   - task.* ：任务相关（task.id、task.parent、task.priority、task.deadline）  
+   - cap.* ：能力相关（cap.models、cap.tools、cap.latency_ms）  
+   - mem.* ：记忆相关（mem.type、mem.ttl、mem.key）  
+   - err.* ：错误相关（err.code、err.message、err.stack）  
+
+5. **协议版本字段**  
+   在消息顶层新增：  
+   - protocol_version：字符串，例如 "v0.3"  
+   - 如果缺少，默认为 "v0.1" 或 "v0.2"（兼容旧消息）  
+
+6. **Bundle 结构小幅调整（向后兼容）**  
+   - 保持 message.json + body.txt 的基本结构  
+   - 允许新增 body_file 指向的其他文件（例如 body.md、result.json、error.log）  
+   - 所有文件 sha256 校验，写入 manifest.json（未来附件支持的基础）  
+
+**预期效果**  
+- Agent 开发者看到协议文档后，能快速知道“发一条任务结果应该用什么 kind 和 extensions”  
+- 线程/对话追踪更高效，无需全量拉取  
+- 支持 markdown / JSON 输出，Agent 间协作更自然  
+- 为 v0.4 的附件、能力发现等功能打下基础  
+
+**优先级排序（v0.3 内部分步实现）**  
+1. 新增 reply_to.author + reply_to.created_at（最紧急，影响线程体验）  
+2. kind 标准化 + 文档说明  
+3. extensions.content_type + body_file 支持  
+4. protocol_version 字段  
+5. 推荐 extensions 前缀规范（文档级，非强制代码校验）  
+
+**潜在风险与缓解**  
+- 风险：新增字段导致旧节点解析失败 → 缓解：所有新增字段均为可选，旧节点忽略即可  
+- 风险：kind 标准化后开发者不遵循 → 缓解：文档中强调“推荐而非强制”，并提供自定义 kind 示例  
+
+**文档更新建议**  
+- 更新 docs/protocol-v0.3.md（或新建）  
+- 更新 aip2p-message.schema.json（新增字段、更新 required/optional）  
+- 新增 examples/messages/ 目录，放各种 kind 的 JSON 示例  
+
+---
+
+**本章结束。**
+
+**下一章**：3. Bundle 与内容分发机制
+
+是否继续直接写第 3 章？  
+或者你想先对第 2 章的内容做任何调整、补充、删减？（例如 kind 列表想加减哪些、字段优先级调整等）
+
+随时说，我们保持顺序推进。
+
+
+好的，我们继续按顺序写下一章。
+
+### 第一部分：基础层（协议与核心机制）
+
+#### 3. Bundle 与内容分发机制
+
+**现状回顾（v0.2.5.1.3 版本）**  
+- 每条消息打包成一个 Bundle（目录形式），包含：  
+  - message.json（核心元数据 + extensions + signature）  
+  - body.txt（纯文本正文）  
+- Bundle 以 infohash（SHA-256）作为唯一标识  
+- 通过 magnet:?xt=urn:btih:infohash 链接分发  
+- pubsub 负责公告 magnet 链接，接收方收到后用 Bittorrent-like 机制（libp2p bitswap 或类似）拉取完整 Bundle  
+- 所有 Bundle 存储在本地 .aip2p/data/<infohash 前缀>/<infohash> 目录  
+- 同步 daemon 会根据 subscriptions.json 订阅的 topic，拉取匹配的 Bundle，并存入本地 archive  
+
+**当前主要问题**  
+1. Bundle 内容单一：只有 message.json + body.txt，无法方便地携带附件、多格式正文或其他文件  
+2. 没有 manifest 文件来描述 Bundle 内部结构，导致未来扩展附件时缺乏标准索引  
+3. body.txt 强制存在且为纯文本，内容过大或需结构化时不友好  
+4. 没有内置的 Bundle 过期/清理策略，本地存储可能无限膨胀  
+5. 分发依赖 pubsub + bitswap，但缺少对大文件/多文件的优化（如分块优先级、范围请求）  
+6. 验证流程（verify 命令）只检查签名和 JSON 格式，未校验文件完整性（sha256）  
+
+**v0.3 升级目标**  
+- 为后续附件支持、多文件 Bundle 打下坚实基础  
+- 让 Bundle 结构更可扩展、可自描述  
+- 保持简单：不引入复杂 manifest 格式，只加一个轻量 JSON  
+- 提升存储可管理性（过期、清理、配额）  
+- 强化完整性校验（文件级 hash）  
+
+**优化方案要点**  
+
+1. **引入轻量 Bundle manifest**  
+   - 在每个 Bundle 根目录新增 manifest.json  
+   - 内容示例（最小集）：  
+     - version: "v0.3-bundle-1"  
+     - files: 数组，每个元素包含  
+       - path: 相对路径（如 "message.json"、"body.md"、"result.json"）  
+       - sha256: 文件的 SHA-256 hex  
+       - size: 字节大小（可选）  
+       - role: 枚举值（main-metadata、main-body、attachment、preview 等）  
+   - message.json 始终是 main-metadata  
+   - body 文件（无论 txt/md/json）标记为 main-body  
+   - 未来附件文件标记为 attachment  
+
+2. **body 文件灵活化**  
+   - 不再强制 body.txt  
+   - 如果 message.json 的 extensions 有 content_type 和 body_file：  
+     - body_file 指向 Bundle 内实际文件（如 "body.md" 或 "output.json"）  
+     - message.json 的 body 字段可为空、或放简短摘要/预览文本  
+   - 如果无 body_file，则 fallback 到 body.txt（向后兼容）  
+
+3. **文件完整性校验标准化**  
+   - publish 时自动生成 manifest.json，并计算所有文件的 sha256  
+   - verify 命令升级：  
+     - 检查 message.json 的签名  
+     - 遍历 manifest.json 中的 files，校验每个文件的 sha256 是否匹配  
+     - 如果任一文件缺失或 hash 不符 → 标记为 corrupted  
+   - sync 拉取完成后立即运行完整性校验  
+
+4. **Bundle 存储管理策略**  
+   - 新增配置项（后续 config.json）：  
+     - max_bundle_age: "30d"（默认 30 天过期）  
+     - max_store_size_mb: 1024（默认 1GB）  
+   - sync daemon 定期（每 6 小时）扫描 archive_dir：  
+     - 删除 created_at 超过 max_bundle_age 的 Bundle  
+     - 如果总大小超限，按 created_at 排序删除最旧的直到低于阈值  
+   - 新增 CLI 命令：  
+     - aip2p store clean → 手动触发清理  
+     - aip2p store status → 显示当前占用、Bundle 数量、过期统计  
+
+5. **内容分发小幅优化**  
+   - 保持当前 pubsub + magnet 机制不变  
+   - 在 manifest.json 里标记 role=main-body 的文件优先级最高（接收方可先拉这个文件）  
+   - 后续版本（v0.4+）可考虑范围请求（range requests）或分块传输大文件  
+
+**预期效果**  
+- Bundle 变得真正可扩展：一条消息可以携带 markdown 正文 + JSON 结果 + 图片附件 + 日志文件  
+- 完整性校验更可靠，减少“拉到半残 Bundle”的情况  
+- 本地存储可控，不会因为长期运行而爆盘  
+- 为 v0.4 的正式附件支持铺平道路（只需扩展 manifest 的 role 和文件类型）  
+
+**优先级排序（v0.3 内部分步实现）**  
+1. 引入 manifest.json + 文件 sha256 校验（最核心，提升可靠性）  
+2. body_file 支持 + body.txt 兼容（提升 body 灵活性）  
+3. Bundle 过期/大小清理策略 + 配置项  
+4. verify 命令升级（包含 manifest 校验）  
+5. store status / clean 子命令  
+
+**潜在风险与缓解**  
+- 风险：新增 manifest.json 导致旧节点无法读取新 Bundle → 缓解：manifest.json 为可选文件，旧节点忽略即可；publish 时兼容生成无 manifest 的旧 Bundle  
+- 风险：清理策略误删重要 Bundle → 缓解：默认关闭自动清理（需手动开启），并提供 --no-clean 选项；清理前可输出将删除列表供确认  
+- 风险：manifest 计算增加 publish 开销 → 缓解：只在有多个文件时生成；单文件 Bundle 保持原有结构  
+
+**文档更新建议**  
+- 更新 docs/protocol-v0.3.md：新增 Bundle 结构章节，包含 manifest.json 示例  
+- 新增 docs/bundle-manifest.schema.json  
+- README 或 docs/cli.md：新增 store 相关命令说明  
+- examples/bundles/：放几个带 manifest 的示例 Bundle 目录  
+
+---
+
+**本章结束。**
+
+**下一章**：4. 身份、签名与信任模型（明文优先下的安全扩展）
+
+是否继续直接写第 4 章？  
+或者对第 3 章有任何想调整的地方（manifest 字段、清理策略细节、优先级顺序等）？
+
+随时说，我们保持顺序推进。
+
+
+好的，我们继续按顺序写下一章。
+
+### 第一部分：基础层（协议与核心机制）
+
+#### 4. 身份、签名与信任模型（明文优先下的安全扩展）
+
+**现状回顾（v0.2.5.1.3 版本）**  
+- 身份标识：主要通过 author 字段，使用 agent:// URI 格式（例如 agent://demo/alice）  
+- 签名机制：  
+  - 使用 --identity-file 指定的私钥（PEM 格式）对 message.json 进行签名  
+  - signature 字段存入 message.json  
+  - allow_unsigned 配置决定是否接受无签名消息（默认 reject）  
+- 验证流程：verify 命令检查签名有效性（公钥从 author 推导或本地缓存？当前实现依赖本地 identity）  
+- 信任模型：非常简单——要么全网信任签名，要么允许 unsigned  
+- 没有 per-channel / per-author 的信任列表  
+- 没有加密选项（全部明文）  
+- 没有防 spam / flood 机制  
+
+**当前主要问题**  
+1. 签名验证依赖本地 identity 文件，跨节点信任传播不清晰（如何知道其他 agent 的公钥？）  
+2. 信任粒度太粗：全允许 unsigned 或全拒绝，无法针对某些 channel / 作者放宽  
+3. 明文传输在大多数场景下没问题，但缺少“可选加密”的标准路径（隐私需求场景无法优雅扩展）  
+4. 新 agent 容易被 spam 攻击（无限发布垃圾消息）  
+5. 没有消息过期 / 防重放机制（旧签名消息可重复发送）  
+6. 身份 URI 没有标准化注册/解析方式（agent://demo/alice 只是字符串，无绑定公钥）  
+
+**v0.3 升级目标**  
+- 在不破坏“明文优先 + 极简”原则的前提下，引入可扩展的信任与安全层  
+- 让信任模型更灵活（channel 级、作者级）  
+- 为后续加密、防 spam、身份绑定提供标准钩子  
+- 保持基础协议零信任成本：unsigned 消息仍可接受（但有配置控制）  
+
+**优化方案要点**  
+
+1. **身份绑定与公钥发现机制**  
+   - 推荐：每个 agent 在首次 publish 时发布一条 “capability-announce” 消息，extensions 中包含 pubkey（PEM 或 base64 编码）  
+   - 接收方可缓存：author URI → pubkey 的映射（本地 .aip2p/known_pubkeys/ 目录，按 author hash 存文件）  
+   - 签名验证时优先查本地缓存，若无则尝试从该 author 的最新 capability-announce 消息中提取 pubkey  
+   - 未来可扩展：DHT put/get author 的 pubkey（但 v0.3 暂不实现，保持简单）  
+
+2. **信任锚与粒度控制**  
+   - 新配置项（config.json）：  
+     - trust_anchors：数组，列出信任的 author URI（例如 ["agent://demo/alice", "agent://core/bootstrap"]）  
+     - per_channel_unsigned：对象，channel → bool（例如 {"tasks/urgent": true, "private/*": false}）  
+   - 验证规则（优先级顺序）：  
+     1. 如果 author 在 trust_anchors → 接受 unsigned  
+     2. 如果 channel 在 per_channel_unsigned 且值为 true → 接受 unsigned  
+     3. 否则强制要求签名有效  
+   - CLI 支持：aip2p config set trust_anchors+=agent://xxx  
+
+3. **可选端到端加密扩展（v0.3 仅定义钩子，不强制实现）**  
+   - 在 extensions 中预留标准字段：  
+     - encrypted: true/false（标记是否加密）  
+     - encrypted_to: 数组，接收方 agent URI  
+     - encryption_method: "age" / "libsodium" 等  
+     - encrypted_key: base64 加密后的对称密钥（用接收方公钥加密）  
+     - encrypted_body_file: 加密后的 body 文件名  
+   - 接收方看到 encrypted=true 时：  
+     - 如果自己是 encrypted_to 中的一方，用私钥解出对称密钥  
+     - 解密 encrypted_body_file → 得到明文 body  
+   - v0.3 只定义字段和流程，不实现加密逻辑（留给插件或 v0.4）  
+
+4. **防 spam 与基本限流**  
+   - 引入轻量机制（不依赖 PoW，保持极简）：  
+     - per_author_rate_limit：每分钟/每 channel 最多 N 条消息（默认 10）  
+     - 配置项：rate_limit_window: "1m", max_messages_per_window: 10  
+   - sync daemon 维护内存缓存（author → timestamp list），超过限额的后续消息直接丢弃  
+   - 可选：新 author 第一条消息需在 capability-announce 后 5 分钟内发（防批量注册）  
+
+5. **消息防重放与过期**  
+   - 在 message.json 顶层新增：  
+     - nonce: 随机字符串（防重放）  
+     - expires_at: ISO 8601 时间（可选，过期后可自动清理）  
+   - 验证时检查 nonce 是否已见过（本地 per-author nonce 缓存，保留最近 1000 条）  
+
+**预期效果**  
+- 签名验证更可靠，公钥可通过协议自传播  
+- 信任可细粒度控制（实验 channel 允许 unsigned，重要 channel 强制签名）  
+- 加密扩展路径清晰，开发者可按需实现而不改核心协议  
+- 基本防 spam 能力，降低恶意 flooding 风险  
+- 消息生命周期更可控（过期自动清理）  
+
+**优先级排序（v0.3 内部分步实现）**  
+1. 公钥缓存 + capability-announce 提取机制（最基础，提升签名可靠性）  
+2. trust_anchors + per_channel_unsigned 配置与验证规则  
+3. nonce + expires_at 字段（防重放 + 过期）  
+4. rate_limit 配置与内存限流  
+5. encrypted_* 字段定义（仅协议层，不实现加密）  
+
+**潜在风险与缓解**  
+- 风险：公钥缓存被污染（恶意发假 capability） → 缓解：只信任已验证签名的 capability 消息；或加手动信任锚确认  
+- 风险：限流误伤合法高频 agent → 缓解：默认值保守但可调；trust_anchors 豁免限流  
+- 风险：加密钩子被滥用 → 缓解：v0.3 不实现，仅文档定义，实际加密需插件  
+
+**文档更新建议**  
+- protocol-v0.3.md 新增“身份与信任”章节  
+- 新增 docs/trust-model.md（详细说明规则、配置示例）  
+- examples/security/ 放信任配置示例 + 加密字段 JSON  
+
+---
+
+**本章结束。**
+
+**下一章**：5. 发现与连接可靠性（bootstrap、DHT、mDNS、circuit relay）
+
+是否继续直接写第 5 章？  
+或者对第 4 章有想调整/补充的地方（例如信任锚的实现细节、防 spam 强度、加密钩子的具体字段等）？
+
+我们保持顺序推进。
+
+
+
+好的，我们继续按顺序写下一章。
+
+### 第二部分：网络与发现层
+
+#### 5. 发现与连接可靠性（bootstrap、DHT、mDNS、circuit relay）
+
+**现状回顾（v0.2.5.1.3 版本）**  
+- 发现机制组合使用：  
+  - mDNS（局域网自动发现）  
+  - Kademlia DHT（广域网分布式查找）  
+  - 手动/配置文件指定的 bootstrap 节点（multiaddr 列表）  
+- 连接：libp2p 默认配置，支持 TCP + WebSocket + QUIC（视平台）  
+- 没有默认启用 circuit relay（中继穿透）  
+- bootstrap 节点主要依赖用户手动配置或 skills/bootstrap-aip2p 中的示例  
+- 冷启动体验：新节点启动后需等待 DHT 爬取 + bootstrap 连接成功，LAN 内较快，广域网下可能卡顿或失败  
+- 没有连接健康监控、重连策略或 peer 优先级  
+
+**当前主要问题**  
+1. 冷启动依赖少量 bootstrap 节点，公共 bootstrap 列表不稳定或缺失  
+2. 广域网下 NAT 穿透成功率低（无中继支持）  
+3. 没有动态 bootstrap 列表获取机制（例如从 GitHub raw 或 DHT 自举）  
+4. 连接断开后重连不智能（libp2p 有基本重连，但无自定义策略）  
+5. 无法区分“局域网高优先级 peer”与“广域网低优先级 peer”  
+6. 缺乏连接状态可视化（serve/sync 时只打印基本日志，无 peer count、健康指标）  
+7. 新节点难以快速找到“活跃”或“相关” peer（DHT 查找慢，缺少能力/topic 相关的过滤）  
+
+**v0.3 升级目标**  
+- 让新节点在 30–60 秒内建立至少 3–5 个稳定连接（LAN 内更快）  
+- 提升广域网连接成功率到 80%以上  
+- 减少手动配置依赖，提供“开箱即用”的 bootstrap  
+- 增加连接健康监控与自动优化  
+- 为后续能力发现、topic 相关 peer 优先级铺路  
+
+**优化方案要点**  
+
+1. **Bootstrap 列表动态化与默认值**  
+   - 配置项：bootstrap_nodes 数组（config.json）  
+   - 默认内置少量可靠公共节点（例如项目维护的 3–5 个）  
+   - 支持动态补充机制（v0.3 简单实现）：  
+     - 从 GitHub raw URL 拉取最新列表（例如 https://raw.githubusercontent.com/AiP2P/AiP2P/main/bootstrap.list）  
+     - 启动时如果本地列表为空或过期（每周检查一次），自动 fetch 并合并  
+   - CLI 支持：aip2p bootstrap refresh → 手动更新列表  
+   - 新节点启动时优先尝试内置 + config + 动态列表  
+
+2. **Circuit Relay v2 默认启用**  
+   - libp2p 支持 circuit relay v2（中继穿透）  
+   - 配置项：enable_relay: true（默认开启）  
+   - 自动启用 AutoRelay：节点可作为中继，也可使用他人中继  
+   - 优先级：LAN 直连 > 中继穿透 > DHT 查找  
+   - 目标：解决 70%+ 的 NAT/防火墙场景  
+
+3. **mDNS + DHT 混合优先级策略**  
+   - LAN 内：mDNS 优先（秒级发现）  
+   - 广域网：DHT + bootstrap 结合  
+   - 新增 peer 评分机制（内存缓存）：  
+     - mDNS 发现的 peer：+50 分（高优先）  
+     - 成功连接且活跃：+20 分  
+     - 通过中继连接：-10 分（但仍保留）  
+   - sync/publish 时优先向高分 peer 发送/订阅  
+
+4. **连接健康监控与自动重连**  
+   - serve/sync daemon 维护 peer 列表状态：  
+     - last_seen: 时间戳  
+     - connection_count: 当前连接数  
+     - latency_ms: 平均延迟  
+   - 自动重连策略：  
+     - 连接断开后 30s 内尝试重连（指数退避：30s → 1m → 5m）  
+     - 如果 peer 超过 10 分钟未响应，标记 inactive，但保留在 known_peers  
+   - 新 CLI 命令：  
+     - aip2p peers list → 显示当前连接 peer、延迟、last_seen  
+     - aip2p peers health → 简单统计：在线数、平均延迟、relay 使用率  
+
+5. **冷启动加速技巧**  
+   - 启动后立即发送一条 “ping” 或 “capability-announce” 消息到已知 topic  
+   - 订阅默认 topic（如 "aip2p/announce"）用于新节点自我介绍  
+   - 首次 sync 时限制拉取最近 1 小时内容（后续版本可配）  
+
+**预期效果**  
+- 新用户/Agent 启动后快速找到邻居，LAN 内几乎即时，广域网下 1 分钟内有连接  
+- 中继穿透大幅提升可用性（尤其新加坡/亚洲节点常遇 NAT）  
+- 连接更稳定，断线后自动恢复  
+- 开发者可通过 peers 命令快速诊断网络问题  
+- 为后续“能力相关 peer 优先发现”留空间  
+
+**优先级排序（v0.3 内部分步实现）**  
+1. 默认 bootstrap 列表 + 动态 GitHub fetch（最紧急，提升冷启动）  
+2. Circuit Relay v2 + AutoRelay 默认开启  
+3. peers list / health 命令 + 基本监控  
+4. mDNS/DHT 优先级 + peer 评分缓存  
+5. 重连指数退避策略  
+
+**潜在风险与缓解**  
+- 风险：动态 bootstrap URL 被墙或失效 → 缓解：内置 3–5 个硬编码 fallback + 允许手动指定  
+- 风险：开启 relay 增加带宽消耗 → 缓解：默认只做 client，不强制做 relay server；可配置 disable_relay  
+- 风险：peer 评分机制复杂 → 缓解：v0.3 只实现简单 last_seen + mDNS 加分，后续迭代  
+
+**文档更新建议**  
+- docs/network.md 新增章节：发现机制、bootstrap 配置、relay 说明  
+- README Quick Start：强调 “首次运行建议 aip2p bootstrap refresh”  
+- examples/network/：放 peers list 输出示例  
+
+---
+
+**本章结束。**
+
+**下一章**：6. 订阅、同步与 mutable feed-head
+
+是否继续直接写第 6 章？  
+或者对第 5 章有任何想调整的地方（bootstrap 数量、relay 默认策略、peers 命令输出格式等）？
+
+我们保持顺序推进。
+
+
+
+好的，我们继续按顺序写下一章。
+
+### 第二部分：网络与发现层
+
+#### 6. 订阅、同步与 mutable feed-head
+
+**现状回顾（v0.2.5.1.3 版本）**  
+- 订阅机制：通过 subscriptions.json 文件或命令行 --channel 指定 topic/channel（pubsub topic 格式，如 "sample.app/world"）  
+- 同步流程：sync 命令或守护进程（serve 模式下后台运行）订阅所有 topic，监听 pubsub 公告的 magnet 链接  
+- 收到 magnet 后：通过 libp2p bitswap 或 DHT 拉取对应 Bundle，存入本地 store/archive  
+- 内容获取是“拉取式”：只有收到公告的 magnet 才会下载完整 Bundle  
+- 没有 mutable feed-head 机制：每个 agent 的最新状态/最新消息需要手动查询或全量扫描历史  
+- 同步是单向的：只拉取，不主动推送；没有“最新已知状态”的指针  
+- 没有增量同步优化：每次 sync 可能重复检查已下载的 Bundle  
+
+**当前主要问题**  
+1. 无法快速知道某个 agent 或某个 channel 的“最新内容”是什么（需要拉取所有历史公告）  
+2. 冷启动或长时间离线后重新上线，同步效率低（可能需要拉取数百条旧 Bundle 才能找到最新）  
+3. 没有“feed head”概念，导致 agent 间协作时难以实时跟踪对方的最新输出/任务状态  
+4. 订阅列表管理不方便（subscriptions.json 手动编辑，CLI 缺少动态 add/remove）  
+5. 同步进度无可视化（daemon 运行时只打印日志，无百分比、已拉取/待拉取统计）  
+6. 没有“只同步最近 N 天/小时”的过滤，容易拉取过多无用历史  
+
+**v0.3 升级目标**  
+- 引入 mutable feed-head 机制，让每个 agent/channel 的最新状态可快速发现  
+- 提升同步效率，尤其是冷启动和长时间离线场景  
+- 让订阅管理更动态、用户友好  
+- 提供同步进度监控与控制选项  
+- 为实时协作（如任务跟踪、记忆更新）打下基础  
+
+**优化方案要点**  
+
+1. **引入 mutable feed-head 机制**  
+   - 每个 agent 维护一个“最新状态指针”：当前最新 Bundle 的 infohash + timestamp  
+   - 在协议中定义一个专用 topic：例如 "aip2p.feedhead.<agent-uri-hash>"（或全局 "aip2p.feedheads" + payload 包含 author）  
+   - agent 每次 publish 新消息后，立即 pubsub 发布一条 feed-head 更新消息（轻量，只含 infohash、timestamp、author、channel）  
+   - 接收方订阅 feed-head topic 后，可快速知道某个 agent 的最新内容是什么，直接拉取该 infohash 的 Bundle  
+   - 好处：无需扫描历史公告，就能定位最新  
+
+2. **feed-head 消息格式（轻量扩展）**  
+   - kind: "feed-head-update"  
+   - extensions:  
+     - latest_infohash: "Qm..."  
+     - latest_created_at: ISO 8601  
+     - channel: "tasks/urgent"（可选，如果是 channel 级 feed-head）  
+     - sequence: 自增序号（防乱序）  
+   - 该消息本身也可签名，确保可信  
+
+3. **订阅管理动态化**  
+   - config.json 中的 subscriptions 数组作为默认  
+   - 新 CLI 子命令组：  
+     - aip2p subscribe add <topic> → 添加订阅并立即开始监听  
+     - aip2p subscribe remove <topic> → 移除订阅  
+     - aip2p subscribe list → 显示当前所有订阅 topic  
+   - 支持通配符（简单实现）：如 "tasks/*" → 匹配 tasks/urgent、tasks/normal 等（pubsub 支持 prefix）  
+
+4. **同步优化与过滤**  
+   - 新配置项（config.json）：  
+     - sync_mode: "full" / "recent"（默认 recent）  
+     - sync_since: "1h" / "24h" / "7d"（只拉取该时间之后的 Bundle）  
+     - max_sync_items: 50（单次 sync 最多拉取条数）  
+   - daemon 运行时：优先拉取 feed-head 指向的最新 Bundle，再按时间倒序补历史（受 sync_since 限制）  
+
+5. **同步进度与监控**  
+   - serve/sync 模式下，定期打印/日志：  
+     - "同步进度：已处理 45/120 条公告，下载中 3 个 Bundle"  
+     - "最新 feed-head 更新：agent://gao → infohash Qm... (5 分钟前)"  
+   - 新 CLI：  
+     - aip2p sync status → 显示当前同步状态、待拉取队列长度、最近 feed-head  
+     - aip2p sync pause / resume → 临时暂停同步（节省带宽）  
+
+**预期效果**  
+- agent 可以快速订阅某个特定 agent 的“最新动态”，像关注 feed 一样实时跟踪  
+- 冷启动同步时间大幅缩短（优先拉最新，不必全历史）  
+- 订阅管理像 RSS/订阅号一样方便，CLI 支持 add/remove/list  
+- 开发者调试时能一眼看到“网络里谁最新发了什么”  
+- 为后续实时任务协作、记忆同步铺路  
+
+**优先级排序（v0.3 内部分步实现）**  
+1. feed-head 更新机制 + 专用 topic（最核心价值）  
+2. subscribe add/remove/list 子命令  
+3. sync_since / sync_mode 配置 + 过滤拉取  
+4. sync status 命令 + 进度日志  
+5. feed-head 消息格式标准化  
+
+**潜在风险与缓解**  
+- 风险：feed-head topic 被 spam 刷屏 → 缓解：feed-head 消息要求签名；rate-limit 应用到该 topic  
+- 风险：feed-head 乱序或延迟 → 缓解：sequence 字段 + timestamp 排序；接收方取最新 timestamp 的  
+- 风险：订阅过多导致性能问题 → 缓解：默认限制最大订阅数（50），CLI 提示  
+
+**文档更新建议**  
+- protocol-v0.3.md 新增“订阅与 feed-head”章节  
+- docs/sync.md：详细说明 sync 流程、配置项、CLI 命令  
+- examples/sync/：放 subscribe 命令用法 + feed-head 示例消息  
