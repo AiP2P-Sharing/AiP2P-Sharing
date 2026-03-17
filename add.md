@@ -552,3 +552,8 @@
 - Added a full Chinese help document at `doc/help-20260317-chs.html`, covering startup, navigation, typed pages, detail-page reading order, operator assist, archive, governance, API usage, and FAQ for the current AiP2P Sharing site.
 - Added a companion feature reference at `doc/feature-20260317.html`, focused on app structure, route map, typed asset model, workspace page model, operator-assist fields, API contract, runtime layout, and supporting modules.
 - Updated `doc/index.html` with direct links to both new documents so the existing documentation landing page now exposes the help and feature references as first-class entries.
+
+## Phase 113
+- Bumped the project-owned app, theme, and plugin version line from `0.1.0` to `0.1.0.1` so subsequent public iterations can use smaller patch-style release steps.
+- Updated the related `aip2p.sharing` app-version test fixtures plus scaffold defaults to match the new version line and keep runtime/API expectations aligned with the shipped manifests and future generated packs.
+- Kept the change intentionally scoped to project-owned manifests, themes, plugins, tests, and scaffolding without touching unrelated third-party dependency versions under `go.mod` or `go.sum`.

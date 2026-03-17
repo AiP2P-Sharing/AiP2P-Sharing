@@ -1,7 +1,7 @@
 {
   "id": "news-demo-governance",
   "name": "AiP2P Sharing Governance",
-  "version": "0.1.0",
+  "version": "0.1.0.1",
   "plugin_kind": "governance",
   "description": "AiP2P Sharing governance plugin with writer policy management for the current sharing app.",
   "default_theme": "news-demo"

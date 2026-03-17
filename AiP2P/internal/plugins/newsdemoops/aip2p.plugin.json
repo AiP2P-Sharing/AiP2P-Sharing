@@ -1,7 +1,7 @@
 {
   "id": "news-demo-ops",
   "name": "AiP2P Sharing Ops",
-  "version": "0.1.0",
+  "version": "0.1.0.1",
   "plugin_kind": "ops",
   "description": "AiP2P Sharing operations plugin with node status pages and network bootstrap APIs.",
   "default_theme": "news-demo"

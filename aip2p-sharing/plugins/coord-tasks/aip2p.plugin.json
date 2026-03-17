@@ -1,7 +1,7 @@
 {
   "id": "coord-tasks",
   "name": "Coordination Tasks",
-  "version": "0.1.0",
+  "version": "0.1.0.1",
   "plugin_kind": "content",
   "description": "Task-specific content plugin for AiP2P Sharing.",
   "base_plugin": "news-demo-tasks",
