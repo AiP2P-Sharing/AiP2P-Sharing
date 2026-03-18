@@ -26,10 +26,10 @@ The current mainline focuses on:
 
 ## Repository Layout
 
-- [`AiP2P/`](/Users/haoniu/sh18/aip2p.com/AiP2P): Go engine, CLI, host runtime, built-in plugins, built-in themes, protocol implementation
-- [`aip2p-sharing/`](/Users/haoniu/sh18/aip2p.com/aip2p-sharing): current app workspace, local theme, local wrapper plugins, seed script, app config
-- [`doc/`](/Users/haoniu/sh18/aip2p.com/doc): project documentation, feature notes, help pages, study notes
-- [`add.md`](/Users/haoniu/sh18/aip2p.com/add.md): rolling implementation log for the current beta rounds
+- [`AiP2P/`](AiP2P/): Go engine, CLI, host runtime, built-in plugins, built-in themes, protocol implementation
+- [`aip2p-sharing/`](aip2p-sharing/): current app workspace, local theme, local wrapper plugins, seed script, app config
+- [`doc/`](doc/): project documentation, feature notes, help pages, study notes
+- [`add.md`](add.md): rolling implementation log for the current beta rounds
 
 ## Requirements
 
@@ -135,7 +135,7 @@ Fetch tags and switch to a published version:
 
 ```bash
 git fetch --tags origin
-git checkout v0.1.0.3
+git checkout v0.1.0.4
 go -C AiP2P test ./internal/plugins/newsdemo ./internal/plugins/newsdemocontent ./internal/workspace
 go -C AiP2P run ./cmd/aip2p apps validate --dir ../aip2p-sharing
 ```
@@ -162,25 +162,26 @@ The app is designed so the theme can change without changing the app's functiona
 
 Current theme switching structure:
 
-- app workspace: [`aip2p-sharing/aip2p.app.json`](/Users/haoniu/sh18/aip2p.com/aip2p-sharing/aip2p.app.json)
-- local themes: [`aip2p-sharing/themes/`](/Users/haoniu/sh18/aip2p.com/aip2p-sharing/themes)
-- built-in themes: [`AiP2P/internal/themes/`](/Users/haoniu/sh18/aip2p.com/AiP2P/internal/themes)
+- app workspace: [`aip2p-sharing/aip2p.app.json`](aip2p-sharing/aip2p.app.json)
+- local themes: [`aip2p-sharing/themes/`](aip2p-sharing/themes/)
+- built-in themes: [`AiP2P/internal/themes/`](AiP2P/internal/themes/)
 
 ## Documentation
 
-- main docs index: [`doc/index.html`](/Users/haoniu/sh18/aip2p.com/doc/index.html)
-- English feature reference: [`doc/feature-20260317.html`](/Users/haoniu/sh18/aip2p.com/doc/feature-20260317.html)
-- Chinese help: [`doc/help-20260317-chs.html`](/Users/haoniu/sh18/aip2p.com/doc/help-20260317-chs.html)
-- detailed Chinese master guide: [`doc/help-20260317-chs2.html`](/Users/haoniu/sh18/aip2p.com/doc/help-20260317-chs2.html)
+- main docs index: [`doc/index.html`](doc/index.html)
+- English feature reference: [`doc/feature-20260317.html`](doc/feature-20260317.html)
+- Chinese help: [`doc/help-20260317-chs.html`](doc/help-20260317-chs.html)
+- detailed Chinese master guide: [`doc/help-20260317-chs2.html`](doc/help-20260317-chs2.html)
 
 ## Development Notes
 
-- The root workspace is not the Go module root; the Go module lives in [`AiP2P/`](/Users/haoniu/sh18/aip2p.com/AiP2P).
-- The active app workspace lives in [`aip2p-sharing/`](/Users/haoniu/sh18/aip2p.com/aip2p-sharing).
+- The root workspace is not the Go module root; the Go module lives in [`AiP2P/`](AiP2P/).
+- The active app workspace lives in [`aip2p-sharing/`](aip2p-sharing/).
 - The current project id is `aip2p.sharing`.
 
 ## License
 
 This repository is licensed under the Apache License 2.0.
 
-See [`LICENSE`](/Users/haoniu/sh18/aip2p.com/LICENSE).
+See [`LICENSE`](LICENSE).
+Official license text: <https://www.apache.org/licenses/LICENSE-2.0>

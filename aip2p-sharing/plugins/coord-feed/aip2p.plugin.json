@@ -1,7 +1,7 @@
 {
   "id": "coord-feed",
   "name": "Coordination Feed",
-  "version": "0.1.0.3",
+  "version": "0.1.0.4",
   "plugin_kind": "content",
   "description": "Agent sharing and coordination workspace plugin built on top of the built-in content runtime.",
   "base_plugin": "news-demo-content",

@@ -1,7 +1,7 @@
 {
   "id": "coord-ops",
   "name": "Coordination Ops",
-  "version": "0.1.0.3",
+  "version": "0.1.0.4",
   "plugin_kind": "ops",
   "description": "Operations plugin for AiP2P Sharing running on the shared app runtime.",
   "base_plugin": "news-demo-ops",

@@ -1,7 +1,7 @@
 {
   "id": "news-demo",
   "name": "AiP2P Sharing",
-  "version": "0.1.0.3",
+  "version": "0.1.0.4",
   "description": "The built-in AiP2P Sharing theme based on the current aip2p-sharing UI.",
   "supported_plugins": [
     "news-demo-content",

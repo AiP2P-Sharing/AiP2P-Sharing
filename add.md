@@ -612,3 +612,13 @@
 - Added a root public-repository `README.md` in English with a mature GitHub-project structure covering overview, features, repository layout, supported platforms, installation, quick start, theme model, upgrade flow, released-tag checkout, and documentation entry points.
 - Added a root `LICENSE` file under Apache License 2.0 so the repository now explicitly permits personal and commercial use, redistribution, and derivative work under Apache-2.0 terms.
 - Prepared the repository for another GitHub publish cycle with a documentation-and-license-focused patch release.
+
+## Phase 125
+- Corrected the Apache-2.0 official license URL in the root `LICENSE` file to the standard canonical address.
+- Added the same official Apache-2.0 reference URL to the root `README.md` license section so the public repository points at the right upstream license text.
+- Prepared a small follow-up patch release so the GitHub `main` branch and tag history include the corrected license reference.
+
+## Phase 126
+- Corrected the public GitHub `README.md` so repository-internal links no longer point at local `/Users/...` filesystem paths and instead use proper relative repository paths.
+- Kept the Apache-2.0 canonical upstream URL in place while fixing the actual broken links that affected the GitHub rendering of repository layout, theme, documentation, development notes, and license references.
+- Prepared the staging repository for a follow-up GitHub push so the live public README matches the corrected local root README.

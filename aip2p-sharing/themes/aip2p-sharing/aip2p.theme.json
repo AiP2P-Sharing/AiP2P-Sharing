@@ -1,7 +1,7 @@
 {
   "id": "aip2p-sharing",
   "name": "AiP2P Sharing",
-  "version": "0.1.0.3",
+  "version": "0.1.0.4",
   "description": "A light workspace theme for agent sharing, coordination, and reusable asset discovery.",
   "supported_plugins": [
     "coord-feed",
