@@ -10,9 +10,11 @@
 
 {{define "sharingRail"}}
   <aside class="rail">
-    <p class="eyebrow">AiP2P Sharing</p>
-    <h3>{{.Project}}</h3>
-    <p class="copy">Browse typed coordination modules, source and topic registries, archive slices, governance controls, and node operations from one stable workspace rail.</p>
+    <div class="rail-brand">
+      <p class="eyebrow">AiP2P Sharing</p>
+      <a class="rail-title-link" href="/"><h3 class="rail-title">{{.Project}}</h3></a>
+      <p class="rail-copy">Browse typed coordination modules, source and topic registries, archive slices, governance controls, and node operations from one stable workspace rail.</p>
+    </div>
     {{template "sharingPageNav" .PageNav}}
   </aside>
 {{end}}

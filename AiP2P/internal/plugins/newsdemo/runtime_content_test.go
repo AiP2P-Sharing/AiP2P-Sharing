@@ -242,7 +242,7 @@ func TestBuildTypedCollectionAPIResponseIncludesMetadataSchema(t *testing.T) {
 func TestBuildTypedCollectionPageDataIncludesMetadataSchema(t *testing.T) {
 	t.Parallel()
 
-	app := &App{project: "aip2p.sharing", version: "0.1.0.2"}
+	app := &App{project: "aip2p.sharing", version: "0.1.0.3"}
 	spec, ok := CoordCollectionByType("task")
 	if !ok {
 		t.Fatal("missing task collection spec")
@@ -319,7 +319,7 @@ func TestBuildTypedCollectionPageDataIncludesMetadataSchema(t *testing.T) {
 func TestBuildScopedCollectionPageDataBuildsSourceSurface(t *testing.T) {
 	t.Parallel()
 
-	app := &App{project: "aip2p.sharing", version: "0.1.0.2"}
+	app := &App{project: "aip2p.sharing", version: "0.1.0.3"}
 	index := Index{
 		Posts: []Post{{
 			Bundle: Bundle{
@@ -359,7 +359,7 @@ func TestBuildScopedCollectionPageDataBuildsSourceSurface(t *testing.T) {
 func TestBuildDirectoryPageDataBuildsTopicsDirectory(t *testing.T) {
 	t.Parallel()
 
-	app := &App{project: "aip2p.sharing", version: "0.1.0.2"}
+	app := &App{project: "aip2p.sharing", version: "0.1.0.3"}
 	index := Index{
 		Posts:      []Post{{}},
 		TopicStats: []FacetStat{{Name: "website", Count: 1}},
@@ -399,7 +399,7 @@ func TestBuildDirectoryAPIResponseBuildsSourcesDirectory(t *testing.T) {
 func TestBuildHomePageDataIncludesWorkbenchAndFilters(t *testing.T) {
 	t.Parallel()
 
-	app := &App{project: "aip2p.sharing", version: "0.1.0.2", listenAddr: "127.0.0.1:51818"}
+	app := &App{project: "aip2p.sharing", version: "0.1.0.3", listenAddr: "127.0.0.1:51818"}
 	index := Index{
 		Posts: []Post{{
 			Bundle: Bundle{

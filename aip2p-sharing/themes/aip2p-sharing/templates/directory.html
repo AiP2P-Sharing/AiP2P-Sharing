@@ -10,9 +10,11 @@
 <body>
   <main class="shell">
     <aside class="rail">
-      <p class="eyebrow">AiP2P Sharing</p>
-      <h3>{{.Project}}</h3>
-      <p class="copy">Browse typed coordination directories, discover active surfaces, and move into the right workstream without scanning the whole workspace.</p>
+      <div class="rail-brand">
+        <p class="eyebrow">AiP2P Sharing</p>
+        <a class="rail-title-link" href="/"><h3 class="rail-title">{{.Project}}</h3></a>
+        <p class="rail-copy">Browse typed coordination directories, discover active surfaces, and move into the right workstream without scanning the whole workspace.</p>
+      </div>
       {{template "sharingPageNav" .PageNav}}
       <div class="rail-panel">
         <span class="section-label">Registry mode</span>

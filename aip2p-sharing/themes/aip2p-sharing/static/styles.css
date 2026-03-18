@@ -53,6 +53,28 @@ a {
   align-self: start;
 }
 
+.rail-brand {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.rail-title-link {
+  text-decoration: none;
+}
+
+.rail-title {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.rail-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
 .rail-panel {
   margin-top: 18px;
   padding-top: 18px;

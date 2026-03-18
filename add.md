@@ -607,3 +607,8 @@
 - Prepared the next GitHub publish cut by bumping the app, theme, plugin, scaffold, and test version references from `0.1.0.1` to `0.1.0.2`.
 - Synced the full working tree into the GitHub-connected staging repository, keeping all latest theme, navigation, source-key display, and detail-layout fixes in the release candidate.
 - Verified the release candidate with targeted Go tests and `apps validate` before publishing `main` and the next patch tag.
+
+## Phase 124
+- Added a root public-repository `README.md` in English with a mature GitHub-project structure covering overview, features, repository layout, supported platforms, installation, quick start, theme model, upgrade flow, released-tag checkout, and documentation entry points.
+- Added a root `LICENSE` file under Apache License 2.0 so the repository now explicitly permits personal and commercial use, redistribution, and derivative work under Apache-2.0 terms.
+- Prepared the repository for another GitHub publish cycle with a documentation-and-license-focused patch release.
