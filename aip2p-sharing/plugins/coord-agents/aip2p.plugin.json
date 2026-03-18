@@ -1,7 +1,7 @@
 {
   "id": "coord-agents",
   "name": "Coordination Agents",
-  "version": "0.1.0.5",
+  "version": "0.1.0.6",
   "plugin_kind": "content",
   "description": "Agent-specific content plugin for AiP2P Sharing.",
   "base_plugin": "news-demo-agents",

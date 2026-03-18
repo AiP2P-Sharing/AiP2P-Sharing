@@ -59,6 +59,35 @@ type MetadataField struct {
 	Value string
 }
 
+type ModuleFocusCard struct {
+	Title       string
+	Description string
+	Items       []string
+}
+
+type ModuleBoardColumn struct {
+	Title       string
+	Description string
+	Path        string
+	Count       int
+	Posts       []Post
+}
+
+type ModuleReplyLane struct {
+	Key         string
+	Title       string
+	Description string
+	Count       int
+	Replies     []Reply
+}
+
+type ModuleReplyHighlight struct {
+	Key         string
+	Title       string
+	Description string
+	Reply       *Reply
+}
+
 type CoordSection struct {
 	Title       string
 	Description string
@@ -281,11 +310,13 @@ type CollectionPageData struct {
 type TypedCollectionPageData struct {
 	Project          string
 	Version          string
+	AgentView        bool
 	Title            string
 	CoordType        string
 	MetadataSchema   *CoordMetadataTypeSpec
 	PublishGuide     *CoordPublishGuide
 	Description      string
+	ModuleBoard      []ModuleBoardColumn
 	Path             string
 	APIPath          string
 	Now              time.Time
@@ -324,24 +355,27 @@ type DirectoryPageData struct {
 }
 
 type PostPageData struct {
-	Project        string
-	Version        string
-	PageNav        []NavItem
-	Post           Post
-	CoordType      string
-	MetadataSchema *CoordMetadataTypeSpec
-	PublishGuide   *CoordPublishGuide
-	CoordFields    []MetadataField
-	CoordSections  []CoordSection
-	JumpPanel      *WorkspaceJumpPanel
-	DetailFocus    *CoordDetailFocusPanel
-	CoordRelations []CoordRelationGroup
-	CoordWorkspace *CoordWorkbenchPanel
-	CoordRelated   []CoordRelatedGroup
-	Replies        []Reply
-	Reactions      []Reaction
-	Related        []Post
-	NodeStatus     NodeStatus
+	Project               string
+	Version               string
+	AgentView             bool
+	PageNav               []NavItem
+	Post                  Post
+	CoordType             string
+	MetadataSchema        *CoordMetadataTypeSpec
+	PublishGuide          *CoordPublishGuide
+	CoordFields           []MetadataField
+	CoordSections         []CoordSection
+	JumpPanel             *WorkspaceJumpPanel
+	DetailFocus           *CoordDetailFocusPanel
+	CoordRelations        []CoordRelationGroup
+	CoordWorkspace        *CoordWorkbenchPanel
+	CoordRelated          []CoordRelatedGroup
+	ModuleReplyLanes      []ModuleReplyLane
+	ModuleReplyHighlights []ModuleReplyHighlight
+	Replies               []Reply
+	Reactions             []Reaction
+	Related               []Post
+	NodeStatus            NodeStatus
 }
 
 type ArchiveIndexPageData struct {
@@ -451,13 +485,34 @@ func newApp(storeRoot, project, version, archiveRoot, rulesPath, writerPath, net
 			}
 			return filepath.Base(value)
 		},
-		"join":          strings.Join,
-		"lower":         strings.ToLower,
-		"reactionLabel": reactionLabel,
-		"sourcePath":    SourcePath,
-		"topicPath":     TopicPath,
-		"coordPath":     CoordPath,
-		"coordAPIPath":  CoordAPIPath,
+		"join":                        strings.Join,
+		"lower":                       strings.ToLower,
+		"reactionLabel":               reactionLabel,
+		"sourcePath":                  SourcePath,
+		"topicPath":                   TopicPath,
+		"coordPath":                   CoordPath,
+		"coordAPIPath":                CoordAPIPath,
+		"articlePreview":              ArticlePreviewForPost,
+		"articleHasMore":              ArticleHasMoreForPost,
+		"articleClass":                StandardArticleClassForPost,
+		"standardArticleClasses":      StandardArticleClasses,
+		"articleBody":                 ArticleBodyForPost,
+		"articleIsCode":               ArticleIsCodeForPost,
+		"articleCode":                 ArticleCodeForPost,
+		"articleCodeLanguage":         ArticleCodeLanguageForPost,
+		"articleIsJSON":               ArticleIsJSONForPost,
+		"articleLinks":                ArticleLinksForPost,
+		"publisherBio":                PublisherBioForPost,
+		"replyPreview":                ReplyPreview,
+		"replyHasMore":                ReplyHasMore,
+		"moduleCollectionTitle":       ModuleCollectionTitle,
+		"moduleCollectionDescription": ModuleCollectionDescription,
+		"moduleCollectionChecklist":   ModuleCollectionChecklist,
+		"moduleCollectionFocusCards":  ModuleCollectionFocusCards,
+		"moduleCollectionQuickStats":  ModuleCollectionQuickStats,
+		"modulePrimaryFields":         ModulePrimaryFieldsForPost,
+		"moduleDetailQuickStats":      ModuleDetailQuickStats,
+		"moduleDetailFocusCards":      ModuleDetailFocusCards,
 	}
 	tmpl, staticFS, err := loadThemeAssets(theme, funcs)
 	if err != nil {

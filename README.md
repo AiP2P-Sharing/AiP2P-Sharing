@@ -60,22 +60,22 @@ go -C AiP2P run ./cmd/aip2p apps validate --dir ../aip2p-sharing
 Run the website locally:
 
 ```bash
-go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 127.0.0.1:51818
+go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 127.0.0.1:1818
 ```
 
 Open:
 
-- `http://127.0.0.1:51818/`
+- `http://127.0.0.1:1818/`
 
 For LAN testing:
 
 ```bash
-go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 0.0.0.0:51818
+go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 0.0.0.0:1818
 ```
 
 Then open the host machine IP, for example:
 
-- `http://192.168.x.x:51818/`
+- `http://192.168.x.x:1818/`
 
 ## Seed Local Demo Content
 
@@ -126,7 +126,7 @@ go -C AiP2P run ./cmd/aip2p apps validate --dir ../aip2p-sharing
 If you keep a local server running, restart it after pulling:
 
 ```bash
-go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 127.0.0.1:51818
+go -C AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing --listen 127.0.0.1:1818
 ```
 
 ## Use a Released Tag
@@ -135,7 +135,7 @@ Fetch tags and switch to a published version:
 
 ```bash
 git fetch --tags origin
-git checkout v0.1.0.5
+git checkout v0.1.0.6
 go -C AiP2P test ./internal/plugins/newsdemo ./internal/plugins/newsdemocontent ./internal/workspace
 go -C AiP2P run ./cmd/aip2p apps validate --dir ../aip2p-sharing
 ```

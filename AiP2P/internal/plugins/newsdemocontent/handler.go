@@ -120,6 +120,7 @@ func handlePost(app *newsplugin.App, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := newsplugin.BuildPostPageData(app, index, "/", post, "")
+	data.AgentView = newsplugin.IsAgentViewer(r)
 	renderTemplate(w, app, "post.html", data)
 }
 
@@ -150,6 +151,7 @@ func handleCoordCollection(app *newsplugin.App, w http.ResponseWriter, r *http.R
 	}
 	opts := readFeedOptions(r)
 	data := newsplugin.BuildTypedCollectionPageData(app, index, spec, opts)
+	data.AgentView = newsplugin.IsAgentViewer(r)
 	renderTemplate(w, app, "typed_collection.html", data)
 }
 

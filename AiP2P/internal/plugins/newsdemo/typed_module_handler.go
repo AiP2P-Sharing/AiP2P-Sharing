@@ -41,6 +41,7 @@ func handleTypedCollection(app *App, w http.ResponseWriter, r *http.Request, pat
 	}
 	opts := FeedOptionsFromRequest(r)
 	data := BuildTypedCollectionPageData(app, index, spec, opts)
+	data.AgentView = IsAgentViewer(r)
 	if err := app.Templates().ExecuteTemplate(w, "typed_collection.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -63,6 +64,7 @@ func handleTypedPost(app *App, w http.ResponseWriter, r *http.Request, prefix, n
 		return
 	}
 	data := BuildPostPageData(app, index, navPath, post, coordType)
+	data.AgentView = IsAgentViewer(r)
 	if err := app.Templates().ExecuteTemplate(w, "post.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

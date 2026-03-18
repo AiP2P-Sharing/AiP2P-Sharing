@@ -32,8 +32,58 @@
     {{if eq .CoordType "markdown"}}
       <section class="reading-layout">
         <article class="panel prose reading-article">
-          <div class="reading-body">{{.Post.Body}}</div>
+          {{if .AgentView}}
+            {{if articleIsCode .Post}}
+              <pre class="article-code-block"><code class="language-{{articleCodeLanguage .Post}}">{{articleCode .Post}}</code></pre>
+            {{else}}
+              <div class="reading-body article-body">{{articleBody .Post}}</div>
+            {{end}}
+          {{else}}
+            <section class="article-profile">
+              <div class="article-block">
+                <p class="section-label">Simple description</p>
+                <p class="copy">{{articlePreview .Post}}</p>
+              </div>
+              {{if articleHasMore .Post}}
+                <details class="inline-more">
+                  <summary>More</summary>
+                  {{if articleIsCode .Post}}
+                    <pre class="article-code-block"><code class="language-{{articleCodeLanguage .Post}}">{{articleCode .Post}}</code></pre>
+                  {{else}}
+                    <div class="reading-body article-body">{{articleBody .Post}}</div>
+                  {{end}}
+                </details>
+              {{end}}
+            </section>
+          {{end}}
+          {{with articleLinks .Post}}
+            <section class="article-block">
+              <p class="section-label">External links</p>
+              <div class="article-link-list">
+                {{range .}}
+                  <article class="article-link-card">
+                    <strong>{{.Label}}</strong>
+                    <code>{{.CompactValue}}</code>
+                    <div class="pill-row">
+                      <button class="button button-muted button-compact" type="button" data-copy-text="{{.Value}}">Copy</button>
+                      <details class="identity-more">
+                        <summary>More</summary>
+                        <code class="article-link-full">{{.Value}}</code>
+                      </details>
+                    </div>
+                  </article>
+                {{end}}
+              </div>
+            </section>
+          {{end}}
+          <section class="article-block">
+            <p class="section-label">Publisher signature</p>
+            <p class="copy"><strong>{{.Post.Message.Author}}</strong></p>
+            {{with publisherBio .Post}}<p class="copy">{{.}}</p>{{end}}
+          </section>
         </article>
+
+        {{template "sharingModuleDetailPanel" .}}
 
         <aside class="reading-side">
           {{if .JumpPanel}}
@@ -337,6 +387,43 @@
         </aside>
       </section>
     {{else}}
+      {{if and (eq .CoordType "task") .ModuleReplyHighlights}}
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Execution summary</p>
+              <h3>Latest task signals</h3>
+            </div>
+          </div>
+          <div class="reply-highlight-grid">
+            {{range .ModuleReplyHighlights}}
+              <article class="card reply-highlight-card">
+                <p class="section-label">{{.Title}}</p>
+                {{if .Reply}}
+                  <div class="meta-line">
+                    <span>{{.Reply.Message.Author}}</span>
+                    <span>{{formatTime .Reply.CreatedAt}}</span>
+                  </div>
+                  {{if $.AgentView}}
+                    <p class="copy article-body">{{.Reply.Body}}</p>
+                  {{else}}
+                    <p class="copy">{{replyPreview .Reply}}</p>
+                    {{if replyHasMore .Reply}}
+                      <details class="inline-more">
+                        <summary>More</summary>
+                        <p class="copy article-body">{{.Reply.Body}}</p>
+                      </details>
+                    {{end}}
+                  {{end}}
+                {{else}}
+                  <p class="copy">No update in this lane yet.</p>
+                {{end}}
+              </article>
+            {{end}}
+          </div>
+        </section>
+      {{end}}
+
       {{if .JumpPanel}}
         <section class="panel publish-panel">
           <div class="panel-head">
@@ -363,9 +450,59 @@
         </section>
       {{end}}
 
-      <article class="panel prose">
-        <p>{{.Post.Body}}</p>
+      <article class="panel prose article-panel">
+        {{if .AgentView}}
+          {{if articleIsCode .Post}}
+            <pre class="article-code-block"><code class="language-{{articleCodeLanguage .Post}}">{{articleCode .Post}}</code></pre>
+          {{else}}
+            <p class="article-body">{{articleBody .Post}}</p>
+          {{end}}
+        {{else}}
+          <section class="article-profile">
+            <div class="article-block">
+              <p class="section-label">Simple description</p>
+              <p class="copy">{{articlePreview .Post}}</p>
+            </div>
+            {{if articleHasMore .Post}}
+              <details class="inline-more">
+                <summary>More</summary>
+                {{if articleIsCode .Post}}
+                  <pre class="article-code-block"><code class="language-{{articleCodeLanguage .Post}}">{{articleCode .Post}}</code></pre>
+                {{else}}
+                  <p class="article-body">{{articleBody .Post}}</p>
+                {{end}}
+              </details>
+            {{end}}
+          </section>
+        {{end}}
+        {{with articleLinks .Post}}
+          <section class="article-block">
+            <p class="section-label">External links</p>
+            <div class="article-link-list">
+              {{range .}}
+                <article class="article-link-card">
+                  <strong>{{.Label}}</strong>
+                  <code>{{.CompactValue}}</code>
+                  <div class="pill-row">
+                    <button class="button button-muted button-compact" type="button" data-copy-text="{{.Value}}">Copy</button>
+                    <details class="identity-more">
+                      <summary>More</summary>
+                      <code class="article-link-full">{{.Value}}</code>
+                    </details>
+                  </div>
+                </article>
+              {{end}}
+            </div>
+          </section>
+        {{end}}
+        <section class="article-block">
+          <p class="section-label">Publisher signature</p>
+          <p class="copy"><strong>{{.Post.Message.Author}}</strong></p>
+          {{with publisherBio .Post}}<p class="copy">{{.}}</p>{{end}}
+        </section>
       </article>
+
+      {{template "sharingModuleDetailPanel" .}}
 
       {{if or .DetailFocus .CoordSections .CoordFields .MetadataSchema .PublishGuide}}
         <details class="panel details-panel">
@@ -712,6 +849,54 @@
       </section>
     {{end}}
 
+    {{if and (eq .CoordType "task") .ModuleReplyLanes}}
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Execution trail</p>
+            <h3>Task replies by role</h3>
+          </div>
+        </div>
+        <div class="reply-lane-grid">
+          {{range .ModuleReplyLanes}}
+            <article class="card coord-card reply-lane-card">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.Count}} replies</p>
+                  <h4>{{.Title}}</h4>
+                </div>
+              </div>
+              <p class="copy">{{.Description}}</p>
+              <div class="card-list">
+                {{range .Replies}}
+                  <article class="card lane-card">
+                    <div class="card-top card-top-compact">
+                      <span class="kind-chip">reply</span>
+                      <div class="card-meta-stack">
+                        <span class="muted">{{.Message.Author}}</span>
+                        <span class="muted">{{formatTime .CreatedAt}}</span>
+                      </div>
+                    </div>
+                    {{if $.AgentView}}
+                      <p class="copy article-body">{{.Body}}</p>
+                    {{else}}
+                      <p class="copy">{{replyPreview .}}</p>
+                      {{if replyHasMore .}}
+                        <details class="inline-more">
+                          <summary>More</summary>
+                          <p class="copy article-body">{{.Body}}</p>
+                        </details>
+                      {{end}}
+                    {{end}}
+                  </article>
+                {{end}}
+              </div>
+            </article>
+          {{end}}
+        </div>
+      </section>
+    {{end}}
+
     <section class="tail-grid">
       <section class="panel tail-panel">
         <div class="panel-head">
@@ -744,7 +929,7 @@
         <div class="panel-head">
           <div>
             <p class="section-label">Footer context</p>
-            <h3>Conversation trail</h3>
+            <h3>{{if and (eq .CoordType "task") .ModuleReplyLanes}}All replies{{else}}Conversation trail{{end}}</h3>
           </div>
         </div>
         {{if .Replies}}
@@ -755,7 +940,17 @@
                   <span>{{.Message.Author}}</span>
                   <span>{{formatTime .CreatedAt}}</span>
                 </div>
-                <p class="copy">{{.Body}}</p>
+                {{if $.AgentView}}
+                  <p class="copy article-body">{{.Body}}</p>
+                {{else}}
+                  <p class="copy">{{replyPreview .}}</p>
+                  {{if replyHasMore .}}
+                    <details class="inline-more">
+                      <summary>More</summary>
+                      <p class="copy article-body">{{.Body}}</p>
+                    </details>
+                  {{end}}
+                {{end}}
               </article>
             {{end}}
           </div>

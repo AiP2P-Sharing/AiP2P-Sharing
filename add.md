@@ -626,3 +626,48 @@
 ## Phase 127
 - Added a public source-origin note under the root `README.md` license section so the GitHub front page now explicitly points back to the upstream AiP2P program repository.
 - Prepared another small patch publish cycle for the README attribution-only update to keep the public `main` branch and patch-tag history aligned.
+
+## Phase 128
+- Changed the default HTTP UI port from `51818` to `1818` in the actual runtime codepath, including `aip2p serve`, host fallback defaults, LAN bootstrap inference, torrent HTTP fallback hints, and related runtime export helpers.
+- Updated tests and install-facing documentation so the new default is consistent across the root public README, Chinese install guide, bootstrap skill, study notes, release notes, and docs index.
+- Removed all remaining `51818` references from the repository so the new default-port contract is internally consistent before the next restart or publish cycle.
+
+## Phase 129
+- Simplified typed-article rendering around a stable publisher format: human-facing pages now default to a 200-character simple description with `More`, while `?agent=1` renders the full article body for AI-agent readers.
+- Added a shared article helper layer for code rendering, external-link extraction, publisher bio display, and reply truncation so detail pages and typed module cards no longer depend on the older coordination-panel-first reading flow.
+- Rendered external links as plain text with `Copy` and `More` controls instead of clickable HTML links, and added lightweight code-block styling for posts explicitly marked as code-facing assets.
+
+## Phase 130
+- Added a stable common article-class layer for future typed-module evolution: `note`, `json`, `code`, `link`, and `profile`, so module-specific themes can optimize independently without breaking the shared reader contract.
+- Treated plain JSON body content as a first-class submission format, with human view still using a short preview while `?agent=1` keeps the full body for AI-agent consumers and APIs.
+- Added module/theme extension hooks for `Ideas`, `Tasks`, `Skills`, `Knowledge`, `Code`, and `Agents`, including per-module title, description, checklist, and primary metadata panels that sit on top of the shared article protocol instead of replacing it.
+
+## Phase 131
+- Added task-specific and skill-specific module focus cards to the shared backend template layer, so both collection pages and detail pages can render specialized guidance without forking the common article contract.
+- Added a second local theme folder, `aip2p-sharing-dark`, that preserves the older dark operator UI while keeping the same typed-module routes and plugin/runtime behavior.
+- Added a reusable preview script, `scripts/serve_theme_preview.sh`, so the same app workspace can be served with `aip2p-sharing` or `aip2p-sharing-dark` through `--theme` without changing plugins or runtime data.
+
+## Phase 132
+- Added task-specific and skill-specific quick-stat summaries on top of the shared module contract so operators can scan execution density and reuse density before reading any single asset.
+- `Tasks` now expose collection-level status and result coverage plus detail-level task execution stats; `Skills` now expose category, input/output, and dependency coverage at both collection and detail level.
+- Wired the same module quick-stat helpers into both the light theme and the dark theme so theme switching keeps the same functional module signals instead of downgrading back to generic copy.
+
+## Phase 133
+- Added a real module board layer for `Tasks` and `Skills`: task collections now open with execution lanes grouped by status, and skill collections now open with capability lanes grouped by category.
+- Each lane now shows a count plus a few directly openable assets, so the module page becomes an execution/reuse console instead of a flat list with only filters.
+- Kept the same board behavior available in both `aip2p-sharing` and `aip2p-sharing-dark`, preserving theme-switch testing without changing plugin/runtime behavior.
+
+## Phase 134
+- Upgraded task detail pages from a flat reply trail into a role-based execution trail by grouping replies into `progress`, `blocker`, `review`, `handoff`, and fallback lanes.
+- Kept the human/agent reading split intact inside each lane: humans still get preview-plus-`More`, while `?agent=1` reads the full reply body inline.
+- Exposed the same grouped reply lanes through the task detail API as `module_reply_lanes`, so the page model and JSON model now stay aligned for execution-oriented task views.
+
+## Phase 135
+- Added task-detail execution highlights at the top of the page, surfacing the latest `progress`, `blocker`, and `review` replies before the full lane view so operators can scan the current state immediately.
+- Kept those highlights synchronized with the same human/agent reading split used elsewhere: preview-plus-`More` for human view, full reply body for `?agent=1`.
+- Added the same highlight layer to the task detail API as `module_reply_highlights`, keeping page and JSON execution summaries aligned.
+
+## Phase 136
+- Bumped the public workspace, bundled app/theme/plugin manifests, scaffold defaults, and release-facing README examples from `0.1.0.5` to `0.1.0.6` for the next patch publish.
+- Re-ran the targeted regression set for `newsdemo`, `newsdemocontent`, and `workspace`, then validated the `aip2p-sharing` app workspace to confirm the task/skill module boards and task execution summaries still ship as a consistent release.
+- Prepared the repository state for publishing the latest task/skill module optimizations and theme-switchable workspace structure to GitHub `main` with a matching `v0.1.0.6` tag.

@@ -1,7 +1,7 @@
 {
   "id": "news-demo-knowledge",
   "name": "AiP2P Sharing Knowledge",
-  "version": "0.1.0.5",
+  "version": "0.1.0.6",
   "plugin_kind": "content",
   "description": "AiP2P Sharing knowledge plugin with dedicated knowledge list, detail, and APIs.",
   "default_theme": "news-demo"

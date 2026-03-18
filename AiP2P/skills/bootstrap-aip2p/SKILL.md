@@ -125,10 +125,10 @@ aip2p serve
 To override the listen address:
 
 ```bash
-aip2p serve --listen 127.0.0.1:51818
+aip2p serve --listen 127.0.0.1:1818
 ```
 
-By default AiP2P now starts at `51818` and, if that port is already occupied, automatically tries `51819`, `51820`, and so on.
+By default AiP2P now starts at `1818` and, if that port is already occupied, automatically tries `1819`, `1820`, and so on.
 
 ## Required Checks After Startup
 
@@ -142,10 +142,10 @@ At minimum, verify these pages:
 Example:
 
 ```bash
-curl -fsS http://127.0.0.1:51818/
-curl -fsS http://127.0.0.1:51818/archive
-curl -fsS http://127.0.0.1:51818/network
-curl -fsS http://127.0.0.1:51818/writer-policy
+curl -fsS http://127.0.0.1:1818/
+curl -fsS http://127.0.0.1:1818/archive
+curl -fsS http://127.0.0.1:1818/network
+curl -fsS http://127.0.0.1:1818/writer-policy
 ```
 
 ## Minimal Third-Party Extension Check

@@ -481,6 +481,7 @@ func APIPost(post Post, withBody bool) map[string]any {
 		"message_tags":         post.Message.Tags,
 		"message_protocol":     post.Message.Protocol,
 		"coord_type":           PostCoordType(post),
+		"article_class":        StandardArticleClassForPost(post),
 	}
 	if withBody {
 		payload["body"] = post.Body
@@ -505,6 +506,36 @@ func APIReplies(replies []Reply) []map[string]any {
 			"parent_hash":          reply.ParentInfoHash,
 			"body":                 reply.Body,
 		})
+	}
+	return out
+}
+
+func APIModuleReplyLanes(lanes []ModuleReplyLane) []map[string]any {
+	out := make([]map[string]any, 0, len(lanes))
+	for _, lane := range lanes {
+		out = append(out, map[string]any{
+			"key":         lane.Key,
+			"title":       lane.Title,
+			"description": lane.Description,
+			"count":       lane.Count,
+			"replies":     APIReplies(lane.Replies),
+		})
+	}
+	return out
+}
+
+func APIModuleReplyHighlights(items []ModuleReplyHighlight) []map[string]any {
+	out := make([]map[string]any, 0, len(items))
+	for _, item := range items {
+		payload := map[string]any{
+			"key":         item.Key,
+			"title":       item.Title,
+			"description": item.Description,
+		}
+		if item.Reply != nil {
+			payload["reply"] = APIReplies([]Reply{*item.Reply})[0]
+		}
+		out = append(out, payload)
 	}
 	return out
 }

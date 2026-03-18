@@ -565,10 +565,14 @@ func summarize(body string, max int) string {
 	if body == "" {
 		return ""
 	}
-	if len(body) <= max {
+	runes := []rune(body)
+	if len(runes) <= max {
 		return body
 	}
-	return body[:max-3] + "..."
+	if max <= 3 {
+		return string(runes[:max])
+	}
+	return string(runes[:max-3]) + "..."
 }
 
 func sourceGroupName(msg Message) string {

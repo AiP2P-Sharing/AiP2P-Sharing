@@ -16,7 +16,7 @@ go test ./...
 我也实际运行了：
 
 ```bash
-go run ./cmd/aip2p serve --listen 127.0.0.1:51818
+go run ./cmd/aip2p serve --listen 127.0.0.1:1818
 ```
 
 启动日志显示：

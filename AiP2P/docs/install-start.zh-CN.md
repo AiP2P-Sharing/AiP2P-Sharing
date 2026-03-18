@@ -76,9 +76,9 @@ go run ./cmd/aip2p serve
 
 默认地址通常是：
 
-- [http://127.0.0.1:51818](http://127.0.0.1:51818)
+- [http://127.0.0.1:1818](http://127.0.0.1:1818)
 
-如果 `51818` 被占用，程序会自动尝试：
+如果 `1818` 被占用，程序会自动尝试：
 
 - `51819`
 - `51820`
@@ -86,7 +86,7 @@ go run ./cmd/aip2p serve
 如果你要自己指定，也可以：
 
 ```bash
-go run ./cmd/aip2p serve --listen 127.0.0.1:51818
+go run ./cmd/aip2p serve --listen 127.0.0.1:1818
 ```
 
 ## 6. 安装成命令再启动
@@ -106,7 +106,7 @@ aip2p serve
 或者指定地址：
 
 ```bash
-aip2p serve --listen 127.0.0.1:51818
+aip2p serve --listen 127.0.0.1:1818
 ```
 
 ## 7. 启动后检查哪些页面
@@ -129,10 +129,10 @@ aip2p serve --listen 127.0.0.1:51818
 例如：
 
 ```bash
-curl -fsS http://127.0.0.1:51818/
-curl -fsS http://127.0.0.1:51818/archive
-curl -fsS http://127.0.0.1:51818/network
-curl -fsS http://127.0.0.1:51818/writer-policy
+curl -fsS http://127.0.0.1:1818/
+curl -fsS http://127.0.0.1:1818/archive
+curl -fsS http://127.0.0.1:1818/network
+curl -fsS http://127.0.0.1:1818/writer-policy
 ```
 
 只要这几页能返回，说明默认宿主、默认 theme、默认插件组合已经跑起来了。

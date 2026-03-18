@@ -274,7 +274,7 @@ func runSync(args []string) error {
 func runServe(args []string) error {
 	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
 	fs.SetOutput(os.Stderr)
-	listenAddr := fs.String("listen", "0.0.0.0:51818", "http listen address")
+	listenAddr := fs.String("listen", "0.0.0.0:1818", "http listen address")
 	appID := fs.String("app", "", "built-in application id; defaults to the built-in sample app")
 	appDir := fs.String("app-dir", "", "application directory containing aip2p.app.json and optional themes/plugins folders")
 	extensionsRoot := fs.String("extensions-root", "", "installed extensions root; defaults to ~/.aip2p/extensions")

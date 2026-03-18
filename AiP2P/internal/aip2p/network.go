@@ -39,7 +39,7 @@ libp2p_listen=/ip4/0.0.0.0/tcp/%d
 libp2p_listen=/ip4/0.0.0.0/udp/%d/quic-v1
 bittorrent_listen=0.0.0.0:%d
 
-# Optional LAN anchor. AiP2P will query http://<lan_peer>:51818/api/network/bootstrap
+# Optional LAN anchor. AiP2P will query http://<lan_peer>:1818/api/network/bootstrap
 # so a plain IP can become a dialable libp2p peer with the current peer_id and listen ports.
 lan_peer=192.168.102.74
 

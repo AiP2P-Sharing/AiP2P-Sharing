@@ -250,7 +250,7 @@ func latestLANBootstrapEndpoint(value string) (string, error) {
 		return "", fmt.Errorf("missing host")
 	}
 	if _, _, err := net.SplitHostPort(host); err != nil {
-		host = net.JoinHostPort(strings.Trim(host, "[]"), "51818")
+		host = net.JoinHostPort(strings.Trim(host, "[]"), "1818")
 	}
 	u.Scheme = "http"
 	u.Host = host

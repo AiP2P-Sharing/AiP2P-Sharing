@@ -24,6 +24,7 @@ Composition:
 - shared-runtime infrastructure wrappers: `coord-archive`, `coord-governance`, `coord-ops`
 - built-in plugins: `news-demo-archive`, `news-demo-governance`, `news-demo-ops`
 - local theme: `aip2p-sharing`
+- alternate local theme: `aip2p-sharing-dark`
 
 Runtime note:
 
@@ -39,6 +40,20 @@ Optional follow-up:
 Run it with:
 
 `go -C ../AiP2P run ./cmd/aip2p serve --app-dir ../aip2p-sharing`
+
+Preview a specific theme:
+
+- light workspace theme:
+  `./scripts/serve_theme_preview.sh aip2p-sharing 0.0.0.0:1818`
+- dark operator theme:
+  `./scripts/serve_theme_preview.sh aip2p-sharing-dark 0.0.0.0:1818`
+
+Theme-switching note:
+
+- themes now live in separate folders under `themes/`
+- both themes share the same plugin/runtime contract
+- `Tasks` and `Skills` can add theme-specific presentation without breaking the shared article protocol
+- the fastest way to test a theme switch is `serve --theme <theme-id>` against the same app workspace
 
 Seed local internal content:
 

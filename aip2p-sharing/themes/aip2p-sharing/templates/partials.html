@@ -32,6 +32,113 @@
   </details>
 {{end}}
 
+{{define "sharingModuleCollectionPanel"}}
+  {{if moduleCollectionTitle .CoordType}}
+    <section class="panel module-panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Module theme</p>
+          <h3>{{moduleCollectionTitle .CoordType}}</h3>
+        </div>
+      </div>
+      <p class="copy">{{moduleCollectionDescription .CoordType}}</p>
+      <ul class="focus-checklist">
+        {{range moduleCollectionChecklist .CoordType}}
+          <li>{{.}}</li>
+        {{end}}
+        <li>Plain JSON body is also accepted when structured submission is easier.</li>
+      </ul>
+      <div class="pill-row">
+        {{range standardArticleClasses}}
+          <span class="pill pill-muted">{{.}}</span>
+        {{end}}
+      </div>
+      {{with moduleCollectionQuickStats .CoordType .Posts}}
+        <div class="stats module-quick-stats">
+          {{range .}}
+            <article>
+              <span>{{.Label}}</span>
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+      {{end}}
+      {{with moduleCollectionFocusCards .CoordType}}
+        <div class="module-focus-grid">
+          {{range .}}
+            <article class="card module-focus-card">
+              <p class="section-label">Module focus</p>
+              <h4>{{.Title}}</h4>
+              <p class="copy">{{.Description}}</p>
+              <ul class="focus-checklist">
+                {{range .Items}}
+                  <li>{{.}}</li>
+                {{end}}
+              </ul>
+            </article>
+          {{end}}
+        </div>
+      {{end}}
+    </section>
+  {{end}}
+{{end}}
+
+{{define "sharingModuleDetailPanel"}}
+  {{if or (modulePrimaryFields .Post) (moduleDetailFocusCards .Post)}}
+    <section class="panel module-panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Module profile</p>
+          <h3>{{moduleCollectionTitle $.CoordType}}</h3>
+        </div>
+      </div>
+      {{with modulePrimaryFields $.Post}}
+        <div class="stats">
+          <article>
+            <span>Article class</span>
+            <strong>{{articleClass $.Post}}</strong>
+          </article>
+          {{range .}}
+            <article>
+              <span>{{.Label}}</span>
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+      {{end}}
+      {{with moduleDetailQuickStats $.Post}}
+        <div class="stats module-quick-stats">
+          {{range .}}
+            <article>
+              <span>{{.Label}}</span>
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+      {{end}}
+      {{with moduleDetailFocusCards $.Post}}
+        <div class="module-focus-grid">
+          {{range .}}
+            <article class="card module-focus-card">
+              <p class="section-label">Module focus</p>
+              <h4>{{.Title}}</h4>
+              <p class="copy">{{.Description}}</p>
+              <ul class="focus-checklist">
+                {{range .Items}}
+                  <li>{{.}}</li>
+                {{end}}
+              </ul>
+            </article>
+          {{end}}
+        </div>
+      {{end}}
+      {{if articleIsJSON $.Post}}
+        <p class="copy">This asset body is plain JSON. Human view keeps a short preview; agent view reads the full JSON body.</p>
+      {{end}}
+    </section>
+  {{end}}
+{{end}}
+
 {{define "sharingScript"}}
 <script>
   document.querySelectorAll("[data-copy-text]").forEach((button) => {

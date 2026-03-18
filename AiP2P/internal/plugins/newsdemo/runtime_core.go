@@ -51,7 +51,7 @@ func WriteJSON(w http.ResponseWriter, status int, payload any) {
 
 func (a *App) httpListenAddr() string {
 	if strings.TrimSpace(a.listenAddr) == "" {
-		return "0.0.0.0:51818"
+		return "0.0.0.0:1818"
 	}
 	return a.listenAddr
 }

@@ -1,0 +1,256 @@
+{{define "typed_collection.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}} | {{.Project}}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    {{template "appSidebar" .}}
+    <div class="page-shell">
+      {{template "sidebarToggle" .}}
+      <header class="hero hero-dashboard">
+        <a class="back-link" href="/">Back to home</a>
+        <p class="eyebrow">{{.Project}} typed assets</p>
+        <div class="hero-heading">
+          <div>
+            <h1>{{.Title}}</h1>
+            <p class="hero-copy">{{.Description}}</p>
+          </div>
+          <div class="hero-actions">
+            <a class="button-link" href="{{.APIPath}}">Open JSON</a>
+          </div>
+        </div>
+        <div class="hero-stats hero-stats-wide">
+          <div class="hero-stat-card">
+            <span class="stat-label">Coord type</span>
+            <strong>{{.CoordType}}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span class="stat-label">Indexed in scope</span>
+            <strong>{{.TotalPostCount}}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span class="stat-label">Snapshot</span>
+            <strong>{{formatTime .Now}}</strong>
+          </div>
+        </div>
+        {{with moduleCollectionFocusCards .CoordType}}
+          <section class="panel panel-inline">
+            <div class="panel-head">
+              <div>
+                <p class="panel-label">Module focus</p>
+                <p class="micro-copy">Module-specific guidance stays visible even when the dark operator theme is selected.</p>
+              </div>
+            </div>
+            {{with moduleCollectionQuickStats $.CoordType $.Posts}}
+              <div class="summary-grid">
+                {{range .}}
+                  <div>
+                    <span class="stat-label">{{.Label}}</span>
+                    <strong>{{.Value}}</strong>
+                  </div>
+                {{end}}
+              </div>
+            {{end}}
+            <section class="directory-grid">
+              {{range .}}
+                <article class="directory-card">
+                  <h2>{{.Title}}</h2>
+                  <p class="summary">{{.Description}}</p>
+                  <ul class="idea-checklist">
+                    {{range .Items}}
+                      <li>{{.}}</li>
+                    {{end}}
+                  </ul>
+                </article>
+              {{end}}
+            </section>
+          </section>
+        {{end}}
+        {{if .ModuleBoard}}
+          <section class="panel panel-inline">
+            <div class="panel-head">
+              <div>
+                <p class="panel-label">{{if eq .CoordType "task"}}Execution board{{else if eq .CoordType "skill"}}Capability board{{else}}Module board{{end}}</p>
+                <p class="micro-copy">{{if eq .CoordType "task"}}Dark-theme lane view of task delivery state.{{else if eq .CoordType "skill"}}Dark-theme lane view of reusable skill categories.{{else}}Dark-theme lane view for this module.{{end}}</p>
+              </div>
+            </div>
+            <section class="directory-grid">
+              {{range .ModuleBoard}}
+                <article class="directory-card">
+                  <div class="card-meta">
+                    <span>{{.Title}}</span>
+                    <span>{{.Count}} assets</span>
+                  </div>
+                  <p class="summary">{{.Description}}</p>
+                  <div class="related-list">
+                    {{range .Posts}}
+                      <article class="related-card">
+                        <a class="related-link" href="{{coordPath .}}">{{.Message.Title}}</a>
+                        <p class="micro-copy">{{articlePreview .}}</p>
+                      </article>
+                    {{end}}
+                  </div>
+                  <div class="story-links">
+                    <a href="{{.Path}}">Open lane</a>
+                  </div>
+                </article>
+              {{end}}
+            </section>
+          </section>
+        {{end}}
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <section class="panel">
+            <p class="panel-label">{{.TopicFacetLabel}}</p>
+            <div class="facet-list">
+              {{range .TopicFacets}}
+                <a class="facet {{if .Active}}is-active{{end}}" href="{{.URL}}">
+                  <span>{{.Name}}</span>
+                  {{if gt .Count 0}}<strong>{{.Count}}</strong>{{end}}
+                </a>
+              {{else}}
+                <p class="micro-copy">No topic facets yet.</p>
+              {{end}}
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="panel-label">{{.SourceFacetLabel}}</p>
+            <div class="facet-list">
+              {{range .SourceFacets}}
+                <a class="facet {{if .Active}}is-active{{end}}" href="{{.URL}}">
+                  <span>{{compactIdentity .Name}}</span>
+                  {{if gt .Count 0}}<strong>{{.Count}}</strong>{{end}}
+                </a>
+              {{else}}
+                <p class="micro-copy">No source facets yet.</p>
+              {{end}}
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="panel-label">{{.MetaFacetLabel}}</p>
+            <div class="facet-list">
+              {{range .MetaFacets}}
+                <a class="facet {{if .Active}}is-active{{end}}" href="{{.URL}}">
+                  <span>{{.Name}}</span>
+                  {{if gt .Count 0}}<strong>{{.Count}}</strong>{{end}}
+                </a>
+              {{else}}
+                <p class="micro-copy">No metadata facets yet.</p>
+              {{end}}
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="panel-label">Time range</p>
+            <div class="facet-list">
+              {{range .WindowOptions}}
+                <a class="facet {{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
+              {{end}}
+            </div>
+          </section>
+
+          <section class="panel">
+            <p class="panel-label">Sort</p>
+            <div class="facet-list">
+              {{range .SortOptions}}
+                <a class="facet {{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
+              {{end}}
+            </div>
+          </section>
+        </aside>
+
+        <main class="feed">
+          {{if or .Description .MetadataSchema .PublishGuide}}
+            <details class="panel panel-inline">
+              <summary class="panel-label">More</summary>
+              {{if .Description}}<p class="micro-copy">{{.Description}}</p>{{end}}
+              {{if .MetadataSchema}}
+                <p class="panel-label">Durable contract</p>
+                <div class="summary-grid">
+                  {{range .MetadataSchema.Sections}}
+                    <div>
+                      <span class="stat-label">{{.Title}}</span>
+                      {{range .Fields}}
+                        <p class="micro-copy"><strong>{{.Label}}:</strong> <code>{{.Key}}</code></p>
+                      {{end}}
+                    </div>
+                  {{end}}
+                </div>
+              {{end}}
+              {{if .PublishGuide}}
+                <p class="panel-label">Operator assist</p>
+                <p class="micro-copy">{{.PublishGuide.Description}}</p>
+                <p class="micro-copy"><strong>Channel:</strong> <code>{{.PublishGuide.Channel}}</code></p>
+                <p class="micro-copy"><strong>Kind:</strong> <code>{{.PublishGuide.Kind}}</code></p>
+                <p class="micro-copy"><strong>Execution mode:</strong> {{.PublishGuide.ExecutionMode}}</p>
+                <p class="micro-copy"><strong>Publisher role:</strong> {{.PublishGuide.PublisherRole}}</p>
+                <p class="micro-copy"><strong>Identity file:</strong> <code>{{.PublishGuide.IdentityFile}}</code></p>
+                <p class="micro-copy"><strong>Store path:</strong> <code>{{.PublishGuide.StorePath}}</code></p>
+                <p class="micro-copy">{{.PublishGuide.TargetSummary}}</p>
+                {{if .PublishGuide.ContextNotes}}
+                  {{range .PublishGuide.ContextNotes}}
+                    <p class="micro-copy">{{.}}</p>
+                  {{end}}
+                {{end}}
+                {{if .PublishGuide.Prerequisites}}
+                  {{range .PublishGuide.Prerequisites}}
+                    <p class="micro-copy">{{.}}</p>
+                  {{end}}
+                {{end}}
+                <p class="micro-copy"><strong>Suggested command:</strong></p>
+                <pre class="network-code">{{.PublishGuide.StarterCommand}}</pre>
+                <p class="micro-copy"><strong>Extensions JSON:</strong></p>
+                <pre class="network-code">{{.PublishGuide.StarterExtensionsJSON}}</pre>
+              {{end}}
+            </details>
+          {{end}}
+          <section class="panel panel-inline">
+            <p class="panel-label">Current slice</p>
+            <div class="summary-grid">
+              {{range .SummaryStats}}
+                <div>
+                  <span class="stat-label">{{.Label}}</span>
+                  <strong>{{.Value}}</strong>
+                </div>
+              {{end}}
+            </div>
+            {{if .ActiveFilters}}
+              <div class="active-filters">
+                {{range .ActiveFilters}}
+                  <a class="filter-chip" href="{{.URL}}">{{.Label}}</a>
+                {{end}}
+                <a class="filter-chip clear-chip" href="{{.Path}}">Clear all</a>
+              </div>
+            {{end}}
+          </section>
+          {{if .Posts}}
+            {{template "paginationControls" .}}
+            <section class="story-list">
+              {{range .Posts}}
+                {{template "postCard" .}}
+              {{end}}
+            </section>
+            {{template "paginationControls" .}}
+          {{else}}
+            <section class="empty-state">
+              <h2>{{.EmptyTitle}}</h2>
+              <p>{{.EmptyCopy}}</p>
+            </section>
+          {{end}}
+        </main>
+      </div>
+    </div>
+  </div>
+{{template "sidebarScript" .}}
+</body>
+</html>
+{{end}}

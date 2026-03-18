@@ -81,7 +81,7 @@ func candidateTorrentURLs(ref SyncRef, lanPeers []string) []string {
 		if host == "" || !allowTorrentHTTPHost(host, lanPeers) {
 			return
 		}
-		value := "http://" + net.JoinHostPort(host, "51818") + "/api/torrents/" + ref.InfoHash + ".torrent"
+		value := "http://" + net.JoinHostPort(host, "1818") + "/api/torrents/" + ref.InfoHash + ".torrent"
 		if _, ok := seen[value]; ok {
 			return
 		}

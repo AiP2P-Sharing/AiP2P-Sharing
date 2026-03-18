@@ -33,6 +33,8 @@
       </article>
     </section>
 
+    {{template "sharingModuleCollectionPanel" .}}
+
     {{if or .Description .MetadataSchema .PublishGuide}}
       <details class="panel details-panel">
         <summary>More</summary>
@@ -191,6 +193,43 @@
       </section>
     {{end}}
 
+    {{if .ModuleBoard}}
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">{{if eq .CoordType "task"}}Execution board{{else if eq .CoordType "skill"}}Capability board{{else}}Module board{{end}}</p>
+            <h3>{{if eq .CoordType "task"}}Tasks by delivery state{{else if eq .CoordType "skill"}}Skills by category{{else}}Module lanes{{end}}</h3>
+          </div>
+        </div>
+        <div class="module-board-grid">
+          {{range .ModuleBoard}}
+            <article class="card module-board-card">
+              <div class="panel-head">
+                <div>
+                  <p class="section-label">{{.Count}} assets</p>
+                  <h4>{{.Title}}</h4>
+                </div>
+                <a class="back-link lane-link" href="{{.Path}}">Open</a>
+              </div>
+              <p class="copy">{{.Description}}</p>
+              {{if .Posts}}
+                <div class="module-board-list">
+                  {{range .Posts}}
+                    <a class="module-board-link" href="{{coordPath .}}">
+                      <strong>{{.Message.Title}}</strong>
+                      <span>{{articlePreview .}}</span>
+                    </a>
+                  {{end}}
+                </div>
+              {{else}}
+                <p class="copy">No assets in this lane yet.</p>
+              {{end}}
+            </article>
+          {{end}}
+        </div>
+      </section>
+    {{end}}
+
     <details class="panel details-panel">
       <summary>Scope</summary>
       <div class="details-panel-body">
@@ -295,7 +334,25 @@
               <span class="muted">{{formatTime .CreatedAt}}</span>
             </div>
             <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
-            <p class="copy">{{.Summary}}</p>
+            {{if $.AgentView}}
+              {{if articleIsCode .}}
+                <pre class="article-code-block"><code class="language-{{articleCodeLanguage .}}">{{articleCode .}}</code></pre>
+              {{else}}
+                <p class="copy article-body">{{articleBody .}}</p>
+              {{end}}
+            {{else}}
+              <p class="copy">{{articlePreview .}}</p>
+              {{if articleHasMore .}}
+                <details class="inline-more">
+                  <summary>More</summary>
+                  {{if articleIsCode .}}
+                    <pre class="article-code-block"><code class="language-{{articleCodeLanguage .}}">{{articleCode .}}</code></pre>
+                  {{else}}
+                    <p class="copy article-body">{{articleBody .}}</p>
+                  {{end}}
+                </details>
+              {{end}}
+            {{end}}
             <div class="meta-line">
               <span>{{.Message.Author}}</span>
                 <span>{{.ReplyCount}} replies</span>

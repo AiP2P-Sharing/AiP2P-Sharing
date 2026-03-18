@@ -1,7 +1,7 @@
 {
   "id": "coord-knowledge",
   "name": "Coordination Knowledge",
-  "version": "0.1.0.5",
+  "version": "0.1.0.6",
   "plugin_kind": "content",
   "description": "Knowledge-specific content plugin for AiP2P Sharing.",
   "base_plugin": "news-demo-knowledge",

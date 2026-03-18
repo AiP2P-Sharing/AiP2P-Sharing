@@ -238,7 +238,7 @@ func normalizeConfig(cfg Config) Config {
 		cfg.App = "news-demo"
 	}
 	if strings.TrimSpace(cfg.ListenAddr) == "" {
-		cfg.ListenAddr = "0.0.0.0:51818"
+		cfg.ListenAddr = "0.0.0.0:1818"
 	}
 	if cfg.SyncStaleAfter <= 0 {
 		cfg.SyncStaleAfter = 2 * time.Minute

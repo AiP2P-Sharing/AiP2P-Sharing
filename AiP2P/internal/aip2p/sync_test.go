@@ -98,7 +98,7 @@ func TestLANBootstrapEndpointDefaultsToLatestPort(t *testing.T) {
 	if err != nil {
 		t.Fatalf("lanBootstrapEndpoint error = %v", err)
 	}
-	if value != "http://192.168.102.74:51818/api/network/bootstrap" {
+	if value != "http://192.168.102.74:1818/api/network/bootstrap" {
 		t.Fatalf("endpoint = %q", value)
 	}
 }
@@ -110,7 +110,7 @@ func TestLANHistoryManifestEndpointDefaultsToLatestPort(t *testing.T) {
 	if err != nil {
 		t.Fatalf("lanHistoryManifestEndpoint error = %v", err)
 	}
-	if value != "http://192.168.102.74:51818/api/history/list" {
+	if value != "http://192.168.102.74:1818/api/history/list" {
 		t.Fatalf("endpoint = %q", value)
 	}
 }

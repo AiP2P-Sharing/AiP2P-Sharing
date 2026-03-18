@@ -1,0 +1,34 @@
+{
+  "id": "aip2p-sharing-dark",
+  "name": "AiP2P Sharing Dark",
+  "version": "0.1.0.6",
+  "description": "A dark operator theme for AiP2P Sharing, preserving the older rail-heavy dashboard while keeping typed-module functionality intact.",
+  "supported_plugins": [
+    "coord-feed",
+    "coord-ideas",
+    "coord-tasks",
+    "coord-skills",
+    "coord-knowledge",
+    "coord-code",
+    "coord-agents",
+    "coord-archive",
+    "coord-governance",
+    "coord-ops",
+    "news-demo-content",
+    "news-demo-ideas",
+    "news-demo-tasks",
+    "news-demo-skills",
+    "news-demo-knowledge",
+    "news-demo-code",
+    "news-demo-agents",
+    "news-demo-archive",
+    "news-demo-governance",
+    "news-demo-ops"
+  ],
+  "required_plugins": [
+    "news-demo-content",
+    "news-demo-archive",
+    "news-demo-governance",
+    "news-demo-ops"
+  ]
+}

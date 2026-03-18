@@ -313,6 +313,60 @@ li {
   gap: 10px;
 }
 
+.module-focus-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-top: 16px;
+}
+
+.module-quick-stats {
+  margin-top: 16px;
+}
+
+.module-board-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.module-board-card {
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.module-board-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.module-board-link {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(245, 240, 231, 0.6);
+  text-decoration: none;
+}
+
+.module-board-link strong {
+  line-height: 1.35;
+}
+
+.module-board-link span {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.module-focus-card {
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.module-focus-card h4 {
+  margin-bottom: 8px;
+}
+
 .details-panel {
   padding: 0;
   overflow: hidden;
@@ -616,6 +670,26 @@ li {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
+.reply-lane-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.reply-lane-card {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.reply-highlight-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.reply-highlight-card {
+  background: rgba(255, 255, 255, 0.72);
+}
+
 .tail-grid {
   display: grid;
   gap: 14px;
@@ -638,6 +712,66 @@ li {
 
 .tail-card {
   border-color: rgba(123, 111, 88, 0.18);
+}
+
+.article-panel,
+.article-profile {
+  display: grid;
+  gap: 1rem;
+}
+
+.article-block {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.article-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.7;
+}
+
+.article-code-block {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(14, 90, 84, 0.07);
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.inline-more {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.inline-more summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.article-link-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.article-link-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.article-link-card code,
+.article-link-full {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .reading-layout {
