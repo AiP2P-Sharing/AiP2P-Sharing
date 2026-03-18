@@ -8,10 +8,13 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page">
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page">
     <a class="back-link" href="/">Back to workspace</a>
     <p class="eyebrow">Node operations</p>
     <h1>Network status</h1>
+
     <section class="panel stats">
       <article>
         <span>Overall</span>
@@ -22,15 +25,320 @@
         <strong>{{.ListenAddr}}</strong>
       </article>
       <article>
+        <span>Supervisor</span>
+        <strong>{{if .Supervisor.Mode}}{{.Supervisor.Mode}}{{else}}external{{end}}</strong>
+      </article>
+      <article>
+        <span>Sync heartbeat</span>
+        <strong>{{if .SyncStatus.UpdatedAt.IsZero}}not yet written{{else}}{{formatTime .SyncStatus.UpdatedAt}}{{end}}</strong>
+      </article>
+      <article>
         <span>Mode</span>
-        <strong>{{if .SyncStatus.Mode}}{{.SyncStatus.Mode}}{{else}}not yet active{{end}}</strong>
+        <strong>{{if .SyncStatus.Mode}}{{.SyncStatus.Mode}}{{else}}ui only{{end}}</strong>
       </article>
       <article>
         <span>Network ID</span>
-        <strong>{{if .SyncStatus.NetworkID}}{{.SyncStatus.NetworkID}}{{else}}not yet assigned{{end}}</strong>
+        <strong class="network-wrap">{{if .SyncStatus.NetworkID}}{{.SyncStatus.NetworkID}}{{else}}not yet assigned{{end}}</strong>
       </article>
     </section>
-  </main>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Node summary</p>
+          <h3>{{.NodeStatus.Summary}}</h3>
+        </div>
+      </div>
+      <p class="copy">{{.NodeStatus.SummaryDetail}}</p>
+      <div class="network-grid">
+        {{range .NodeStatus.Dashboard}}
+          <article class="card coord-card">
+            <p class="section-label">{{.Label}}</p>
+            <h4>{{.Value}}</h4>
+            <p class="copy">{{.Detail}}</p>
+          </article>
+        {{end}}
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="section-label">Node operations</p>
+          <h3>Supervisor, worker, and LAN anchors</h3>
+        </div>
+      </div>
+      <div class="network-grid">
+        <article class="card coord-card">
+          <p class="section-label">Worker mode</p>
+          <h4>{{if .Supervisor.Mode}}{{.Supervisor.Mode}}{{else}}external{{end}}</h4>
+          <p class="copy">{{if eq .Supervisor.Mode "managed"}}aip2p-sharingd is supervising the sync worker.{{else}}The sync worker is not under aip2p-sharingd supervision.{{end}}</p>
+        </article>
+        <article class="card coord-card">
+          <p class="section-label">Worker PID</p>
+          <h4>{{if .Supervisor.WorkerPID}}{{.Supervisor.WorkerPID}}{{else if .SyncStatus.PID}}{{.SyncStatus.PID}}{{else}}not running{{end}}</h4>
+          <p class="copy">Live worker pid reported by supervisor state or sync heartbeat.</p>
+        </article>
+        <article class="card coord-card">
+          <p class="section-label">Restart count</p>
+          <h4>{{.Supervisor.RestartCount}}</h4>
+          <p class="copy">{{if .Supervisor.LastRestartReason}}Last reason: {{.Supervisor.LastRestartReason}}{{else}}No supervisor restart recorded yet.{{end}}</p>
+        </article>
+        <article class="card coord-card">
+          <p class="section-label">Heartbeat policy</p>
+          <h4>{{if .Supervisor.StaleAfter}}{{.Supervisor.StaleAfter}}{{else}}not managed{{end}}</h4>
+          <p class="copy">Managed mode restarts after this stale interval.</p>
+        </article>
+      </div>
+      {{if .LANPeers}}
+        <div class="network-block">
+          <p class="section-label">LAN libp2p anchor</p>
+          <div class="network-code-list">
+            {{range .LANPeers}}<code>{{.}}</code>{{end}}
+          </div>
+        </div>
+      {{end}}
+      {{if .LANBTAnchors}}
+        <div class="network-block">
+          <p class="section-label">LAN BT/DHT anchor</p>
+          <div class="network-code-list">
+            {{range .LANBTAnchors}}<code>{{.Peer}}</code>{{end}}
+          </div>
+        </div>
+      {{end}}
+    </section>
+
+    <div class="network-grid">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">libp2p pubsub</p>
+            <h3>Announcement relay</h3>
+          </div>
+        </div>
+        <div class="stats network-stats">
+          <article><span>Published</span><strong>{{.SyncStatus.PubSub.Published}}</strong></article>
+          <article><span>Received</span><strong>{{.SyncStatus.PubSub.Received}}</strong></article>
+          <article><span>Enqueued</span><strong>{{.SyncStatus.PubSub.Enqueued}}</strong></article>
+          <article><span>Last topic</span><strong class="network-wrap">{{if .SyncStatus.PubSub.LastTopic}}{{.SyncStatus.PubSub.LastTopic}}{{else}}none yet{{end}}</strong></article>
+        </div>
+        {{if .SyncStatus.PubSub.JoinedTopics}}
+          <div class="network-block">
+            <p class="section-label">Joined topics</p>
+            <div class="network-code-list">
+              {{range .SyncStatus.PubSub.JoinedTopics}}<code>{{.}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.PubSub.DiscoveryNamespaces}}
+          <div class="network-block">
+            <p class="section-label">Discovery namespaces</p>
+            <div class="network-code-list">
+              {{range .SyncStatus.PubSub.DiscoveryNamespaces}}<code>{{.}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.PubSub.LastError}}
+          <details class="details-panel network-inline-details">
+            <summary>Raw pubsub error</summary>
+            <div class="details-panel-body">
+              <p class="copy">{{.SyncStatus.PubSub.LastError}}</p>
+            </div>
+          </details>
+        {{end}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">libp2p</p>
+            <h3>Bootstrap and peer reachability</h3>
+          </div>
+        </div>
+        <div class="stats network-stats">
+          <article><span>Connected peers</span><strong>{{.SyncStatus.LibP2P.ConnectedPeers}}</strong></article>
+          <article><span>Routing table</span><strong>{{.SyncStatus.LibP2P.RoutingTablePeers}}</strong></article>
+          <article><span>Bootstrap</span><strong>{{.SyncStatus.LibP2P.ReachableBootstrap}}/{{.SyncStatus.LibP2P.ConfiguredBootstrap}}</strong></article>
+          <article><span>Peer ID</span><strong class="network-wrap">{{if .SyncStatus.LibP2P.PeerID}}{{.SyncStatus.LibP2P.PeerID}}{{else}}not running{{end}}</strong></article>
+        </div>
+        {{if .SyncStatus.LibP2P.ConfiguredListen}}
+          <div class="network-block">
+            <p class="section-label">Configured listen</p>
+            <div class="network-code-list">
+              {{range .SyncStatus.LibP2P.ConfiguredListen}}<code>{{.}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.LibP2P.ListenAddrs}}
+          <div class="network-block">
+            <p class="section-label">Active listen addrs</p>
+            <div class="network-code-list">
+              {{range .SyncStatus.LibP2P.ListenAddrs}}<code>{{.}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.LibP2P.Peers}}
+          <details class="details-panel network-inline-details">
+            <summary>Peers</summary>
+            <div class="details-panel-body">
+              <div class="card-list">
+                {{range .SyncStatus.LibP2P.Peers}}
+                  <article class="card lane-card">
+                    <div class="card-top">
+                      <span class="kind-chip">peer</span>
+                      <span class="muted">{{if .Reachable}}reachable{{else if .Connected}}connected{{else}}offline{{end}}</span>
+                    </div>
+                    <p class="copy network-wrap"><strong>{{.PeerID}}</strong></p>
+                    <p class="copy network-wrap">{{.Address}}</p>
+                    {{if .RTT}}<p class="copy">RTT {{.RTT}}</p>{{end}}
+                    {{if .Error}}<p class="copy">{{.Error}}</p>{{end}}
+                  </article>
+                {{end}}
+              </div>
+            </div>
+          </details>
+        {{end}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">LAN mDNS</p>
+            <h3>Local network discovery</h3>
+          </div>
+        </div>
+        <div class="stats network-stats">
+          <article><span>Service</span><strong>{{if .SyncStatus.LibP2P.MDNS.ServiceName}}{{.SyncStatus.LibP2P.MDNS.ServiceName}}{{else}}not running{{end}}</strong></article>
+          <article><span>Discovered</span><strong>{{.SyncStatus.LibP2P.MDNS.DiscoveredPeers}}</strong></article>
+          <article><span>Connected</span><strong>{{.SyncStatus.LibP2P.MDNS.ConnectedPeers}}</strong></article>
+          <article><span>Last seen</span><strong>{{formatOptionalTime .SyncStatus.LibP2P.MDNS.LastDiscoveredAt}}</strong></article>
+        </div>
+        {{if .SyncStatus.LibP2P.MDNS.Peers}}
+          <details class="details-panel network-inline-details">
+            <summary>LAN peers</summary>
+            <div class="details-panel-body">
+              <div class="card-list">
+                {{range .SyncStatus.LibP2P.MDNS.Peers}}
+                  <article class="card lane-card">
+                    <p class="copy network-wrap"><strong>{{.PeerID}}</strong></p>
+                    <p class="copy network-wrap">{{.Address}}</p>
+                    {{if .Error}}<p class="copy">{{.Error}}</p>{{end}}
+                  </article>
+                {{end}}
+              </div>
+            </div>
+          </details>
+        {{end}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">LAN BT/DHT</p>
+            <h3>LAN backfill anchor</h3>
+          </div>
+        </div>
+        <p class="copy">{{.LANBTOverall}}</p>
+        {{if .LANBTAnchors}}
+          <div class="card-list">
+            {{range .LANBTAnchors}}
+              <article class="card lane-card">
+                <div class="card-top">
+                  <span class="kind-chip">lan_bt_peer</span>
+                  <span class="muted">{{if .MatchedNode}}port learned{{else if .Error}}query failed{{else}}waiting{{end}}</span>
+                </div>
+                <p class="copy network-wrap"><strong>{{.Peer}}</strong></p>
+                {{if .MatchedNode}}<p class="copy network-wrap">Matched node: {{.MatchedNode}}</p>{{end}}
+                {{if .Nodes}}
+                  <div class="network-code-list">
+                    {{range .Nodes}}<code>{{.}}</code>{{end}}
+                  </div>
+                {{end}}
+                {{if .Error}}<p class="copy">{{.Error}}</p>{{end}}
+              </article>
+            {{end}}
+          </div>
+        {{else}}
+          <p class="copy">No `lan_bt_peer` configured.</p>
+        {{end}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">BitTorrent DHT</p>
+            <h3>Bundle retrieval assist</h3>
+          </div>
+        </div>
+        <div class="stats network-stats">
+          <article><span>Configured listen</span><strong class="network-wrap">{{if .SyncStatus.BitTorrentDHT.ConfiguredListen}}{{.SyncStatus.BitTorrentDHT.ConfiguredListen}}{{else}}auto{{end}}</strong></article>
+          <article><span>Servers</span><strong>{{.SyncStatus.BitTorrentDHT.Servers}}</strong></article>
+          <article><span>Nodes</span><strong>{{.SyncStatus.BitTorrentDHT.Nodes}}</strong></article>
+          <article><span>Good nodes</span><strong>{{.SyncStatus.BitTorrentDHT.GoodNodes}}</strong></article>
+          <article><span>Outstanding tx</span><strong>{{.SyncStatus.BitTorrentDHT.OutstandingTransactions}}</strong></article>
+        </div>
+        {{if .SyncStatus.BitTorrentDHT.ListenAddrs}}
+          <div class="network-block">
+            <p class="section-label">Active listen addrs</p>
+            <div class="network-code-list">
+              {{range .SyncStatus.BitTorrentDHT.ListenAddrs}}<code>{{.}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.BitTorrentDHT.LastError}}
+          <details class="details-panel network-inline-details">
+            <summary>Raw DHT error</summary>
+            <div class="details-panel-body">
+              <p class="copy">{{.SyncStatus.BitTorrentDHT.LastError}}</p>
+            </div>
+          </details>
+        {{end}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="section-label">Sync daemon</p>
+            <h3>Queue and import activity</h3>
+          </div>
+        </div>
+        <div class="stats network-stats">
+          <article><span>Queue refs</span><strong>{{.SyncStatus.SyncActivity.QueueRefs}}</strong></article>
+          <article><span>Imported</span><strong>{{.SyncStatus.SyncActivity.Imported}}</strong></article>
+          <article><span>Skipped</span><strong>{{.SyncStatus.SyncActivity.Skipped}}</strong></article>
+          <article><span>Failed</span><strong>{{.SyncStatus.SyncActivity.Failed}}</strong></article>
+          <article><span>Last status</span><strong>{{if .SyncStatus.SyncActivity.LastStatus}}{{.SyncStatus.SyncActivity.LastStatus}}{{else}}none yet{{end}}</strong></article>
+          <article><span>Last event</span><strong>{{formatOptionalTime .SyncStatus.SyncActivity.LastEventAt}}</strong></article>
+        </div>
+        {{if .Supervisor.Mode}}
+          <div class="network-block">
+            <p class="section-label">Supervisor state</p>
+            <div class="network-code-list">
+              <code>mode={{.Supervisor.Mode}}</code>
+              {{if .Supervisor.BinaryPath}}<code>binary={{.Supervisor.BinaryPath}}</code>{{end}}
+              {{if .Supervisor.LogPath}}<code>log={{.Supervisor.LogPath}}</code>{{end}}
+              {{if .Supervisor.StatusPath}}<code>status={{.Supervisor.StatusPath}}</code>{{end}}
+            </div>
+          </div>
+        {{end}}
+        {{if .SyncStatus.SyncActivity.LastRef}}
+          <div class="network-block">
+            <p class="section-label">Last ref</p>
+            <pre class="contract-code"><code>{{.SyncStatus.SyncActivity.LastRef}}</code></pre>
+          </div>
+        {{end}}
+        {{if .Supervisor.LastExit}}
+          <details class="details-panel network-inline-details">
+            <summary>Last worker exit</summary>
+            <div class="details-panel-body">
+              <p class="copy">{{.Supervisor.LastExit}}</p>
+            </div>
+          </details>
+        {{end}}
+      </section>
+    </div>
+    </main>
+  </div>
 </body>
 </html>
 {{end}}

@@ -972,10 +972,10 @@ func compactIdentity(value string) string {
 		return ""
 	}
 	if isPublicKeyish(value) {
-		if len(value) <= 10 {
+		if len(value) <= 8 {
 			return value
 		}
-		return value[:10] + "..."
+		return value[:8] + "..."
 	}
 	if len(value) <= 24 {
 		return value

@@ -8,8 +8,9 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page">
-    {{template "sharingPageNav" .PageNav}}
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page">
     <p class="eyebrow">Asset archive</p>
     <h1>Local coordination archive</h1>
     <p class="lede">Immutable Markdown mirrors for shared AiP2P bundles. Use the archive to inspect daily asset snapshots without depending on the live coordination workspace.</p>
@@ -50,7 +51,8 @@
         {{end}}
       </div>
     </section>
-  </main>
+    </main>
+  </div>
 </body>
 </html>
 {{end}}

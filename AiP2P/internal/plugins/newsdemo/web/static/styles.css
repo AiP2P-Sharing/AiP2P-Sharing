@@ -896,6 +896,33 @@ dd {
   width: fit-content;
 }
 
+.identity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.identity-reveal-inline {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.identity-reveal-inline summary {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.identity-metadata {
+  display: grid;
+  gap: 8px;
+}
+
 .pagination-size {
   display: grid;
   gap: 8px;

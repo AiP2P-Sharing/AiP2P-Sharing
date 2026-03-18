@@ -84,10 +84,21 @@
               <div class="card-top">
                 <div>
                   <span class="section-label">{{if eq $.Kind "Sources"}}Source workstream{{else if eq $.Kind "Topics"}}Workstream topic{{else}}Registry item{{end}}</span>
-                  <h4><a href="{{.URL}}">{{.Name}}</a></h4>
+                  <h4><a href="{{.URL}}">{{if isPublicKeyish .Name}}{{compactIdentity .Name}}{{else}}{{.Name}}{{end}}</a></h4>
                 </div>
                 <span class="pill">{{.AvgTruth}}</span>
               </div>
+              {{if isPublicKeyish .Name}}
+                <div class="identity-actions">
+                  <button class="button button-muted button-compact" type="button" data-copy-text="{{.Name}}">Copy</button>
+                  <details class="identity-more">
+                    <summary>More</summary>
+                    <div class="identity-more-body">
+                      <code class="contract-code">{{.Name}}</code>
+                    </div>
+                  </details>
+                </div>
+              {{end}}
               <p class="copy">
                 {{if eq $.Kind "Sources"}}
                   Typed coordination assets collected from this external source page.
@@ -129,6 +140,7 @@
       </section>
     </div>
   </main>
+  {{template "sharingScript" .}}
 </body>
 </html>
 {{end}}

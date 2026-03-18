@@ -557,3 +557,53 @@
 - Bumped the project-owned app, theme, and plugin version line from `0.1.0` to `0.1.0.1` so subsequent public iterations can use smaller patch-style release steps.
 - Updated the related `aip2p.sharing` app-version test fixtures plus scaffold defaults to match the new version line and keep runtime/API expectations aligned with the shipped manifests and future generated packs.
 - Kept the change intentionally scoped to project-owned manifests, themes, plugins, tests, and scaffolding without touching unrelated third-party dependency versions under `go.mod` or `go.sum`.
+
+## Phase 114
+- Added a much more detailed Chinese master guide at `doc/help-20260317-chs2.html`, covering design rationale, repository structure, module responsibilities, page map, user paths, typed asset model, operator-assist philosophy, API contract, deployment, and cleanup guidance.
+- Updated `doc/index.html` to expose the new master guide as a first-class documentation entry next to the existing help and feature references.
+- Positioned the new document as the “why + how + examples + directory map” companion to the shorter help and feature pages, so the documentation set now has a full top-level explainer for the current AiP2P Sharing site.
+
+## Phase 115
+- Switched typed module and detail pages toward an agent-first UI by moving explanation-heavy surfaces behind default-collapsed `More` panels.
+- Kept live queues, relation paths, workspace jumps, and core content visible while hiding summaries, durable contract blocks, and operator-assist guidance until explicitly expanded.
+- Synced the bundled fallback templates to the same `More` behavior so fallback rendering also defaults to a compact machine-oriented view.
+
+## Phase 116
+- Compressed the top-level page navigation into a compact wrapped module bar so typed pages no longer burn the whole first screen on large stacked nav buttons.
+- Moved the typed-module scope/facet surface behind a default-collapsed `Scope` panel while keeping only currently active filters visible by default.
+- Shifted typed module pages further toward an agent-console layout where the first screen now prioritizes title, stats, active scope, and live queue over explanatory navigation chrome.
+
+## Phase 117
+- Replaced the always-open top nav on typed collection and detail pages with a collapsed `Modules` panel so agents land on content first instead of scanning navigation.
+- Kept the compact wrapped module strip inside that collapsed panel for fast access when needed, without spending the first screen on stacked module buttons.
+- Tightened the typed-page header flow again so the default reading path is now `title -> stats -> active scope -> queue/body`, with navigation and explanations both opt-in.
+
+## Phase 118
+- Rebuilt the `aip2p-sharing` network page from a minimal summary into a fuller node-telemetry surface that restores supervisor, pubsub, libp2p, LAN mDNS, LAN BT/DHT, BitTorrent DHT, and sync-daemon visibility.
+- Kept the restored network view compact by using the active theme's generic panel/grid language instead of reverting to the older human-dashboard layout, while still surfacing the missing raw addresses, peer state, queue counters, and error details.
+- Added small network-specific utility styles for wrapped ids/addrs and code-list blocks so high-entropy machine data is readable again without blowing out the page width.
+
+## Phase 119
+- Started aligning the older dark UI shell with today's modular site structure by adding explicit `Ideas / Tasks / Skills / Knowledge / Code / Agents` entry points to the bundled sidebar instead of relying only on the older generic navigation.
+- Added typed-module and priority-workspace panels to the old dark homepage so the new coordination surfaces are discoverable without switching to the newer light theme.
+- Kept the older theme shell intact while grafting in the newer modular navigation and lane-entry concepts, matching the direction the user requested.
+
+## Phase 120
+- Standardized public-key display in the live source-facing UI so registry and scoped source views no longer dump full keys into the first screen; visible labels now use the 10-character compact identity form consistently.
+- Added explicit `Copy` and `More` controls under public-key source labels in the light sharing theme, and synced the older dark templates to the same `Copy + More` interaction instead of forcing full-key rendering in-place.
+- Extended the same compact-display rule to dark-theme post metadata for origin and parent public keys, while preserving full-key access behind the new `More` reveal and keeping copy actions available.
+
+## Phase 121
+- Restored the persistent left workspace rail in the light `aip2p-sharing` theme for typed module pages, detail pages, archive pages, governance, and network, so these routes no longer lose the main module navigation while `Sources` still keeps its existing rail behavior.
+- Added a shared light-theme rail partial and reused it across `ideas / tasks / skills / knowledge / code / agents / archive / policy / network` surfaces to keep the navigation model consistent with the working source registry pages.
+- Tightened public-key compaction again by changing the shared compact identity rule from 10 to 8 visible characters before ellipsis, matching the user's requested maximum for source-facing cards.
+
+## Phase 122
+- Reworked relation and nearby-asset card headers on light-theme detail pages so typed chips stay on the left while timestamps and match scores stack on the right, preventing the broken vertical wrapping seen on skill detail routes.
+- Increased the minimum width of the generic coordination grid from 240px to 300px so detail-side cards stop collapsing into unreadable three-column micro layouts on wider desktop pages.
+- Kept the same data and navigation structure intact while fixing the visual density problem entirely in the light-theme detail template and CSS layer.
+
+## Phase 123
+- Prepared the next GitHub publish cut by bumping the app, theme, plugin, scaffold, and test version references from `0.1.0.1` to `0.1.0.2`.
+- Synced the full working tree into the GitHub-connected staging repository, keeping all latest theme, navigation, source-key display, and detail-layout fixes in the release candidate.
+- Verified the release candidate with targeted Go tests and `apps validate` before publishing `main` and the next patch tag.

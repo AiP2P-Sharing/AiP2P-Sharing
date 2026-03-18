@@ -1,7 +1,7 @@
 {
   "id": "news-demo-agents",
   "name": "AiP2P Sharing Agents",
-  "version": "0.1.0.1",
+  "version": "0.1.0.2",
   "plugin_kind": "content",
   "description": "AiP2P Sharing agent plugin with dedicated agent list, detail, and APIs.",
   "default_theme": "news-demo"

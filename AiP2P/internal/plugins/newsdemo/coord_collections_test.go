@@ -2178,7 +2178,7 @@ func TestBuildPostAPIResponseIncludesNavigationEnvelope(t *testing.T) {
 func TestBuildPostPageDataIncludesMetadataSchema(t *testing.T) {
 	t.Parallel()
 
-	app := &App{project: "aip2p.sharing", version: "0.1.0.1"}
+	app := &App{project: "aip2p.sharing", version: "0.1.0.2"}
 	post := Post{
 		Bundle: Bundle{
 			InfoHash: "task-1",

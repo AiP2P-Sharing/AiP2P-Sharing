@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{.Kind}} {{.Name}}</title>
+  <title>{{.Kind}} {{if isPublicKeyish .Name}}{{compactIdentity .Name}}{{else}}{{.Name}}{{end}}</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -12,7 +12,18 @@
     {{template "sharingPageNav" .PageNav}}
     <a class="back-link" href="{{.DirectoryURL}}">Back to {{.Kind}} registry</a>
     <p class="eyebrow">{{if eq .Kind "Topic"}}Topic workstream{{else if eq .Kind "Source"}}Source workstream{{else}}Scoped workspace{{end}}</p>
-    <h1>{{.Name}}</h1>
+    <h1>{{if isPublicKeyish .Name}}{{compactIdentity .Name}}{{else}}{{.Name}}{{end}}</h1>
+    {{if isPublicKeyish .Name}}
+      <div class="identity-actions">
+        <button class="button button-muted button-compact" type="button" data-copy-text="{{.Name}}">Copy</button>
+        <details class="identity-more">
+          <summary>More</summary>
+          <div class="identity-more-body">
+            <code class="contract-code">{{.Name}}</code>
+          </div>
+        </details>
+      </div>
+    {{end}}
     <section class="panel stats">
       <article>
         <span>Kind</span>
@@ -228,6 +239,7 @@
       </div>
     </section>
   </main>
+  {{template "sharingScript" .}}
 </body>
 </html>
 {{end}}

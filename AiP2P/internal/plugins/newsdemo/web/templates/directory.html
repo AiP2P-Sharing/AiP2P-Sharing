@@ -60,13 +60,15 @@
                 </div>
                 <h2><a href="{{.URL}}">{{compactIdentity .Name}}</a></h2>
                 {{if isPublicKeyish .Name}}
-                  <details class="identity-reveal">
-                    <summary>View full key</summary>
-                    <div class="identity-reveal-body">
-                      <code class="identity-code">{{.Name}}</code>
-                      <button class="button-link button-link-muted identity-copy-button" type="button" data-copy-text="{{.Name}}">Copy</button>
-                    </div>
-                  </details>
+                  <div class="identity-actions">
+                    <button class="button-link button-link-muted identity-copy-button" type="button" data-copy-text="{{.Name}}">Copy</button>
+                    <details class="identity-reveal identity-reveal-inline">
+                      <summary>More</summary>
+                      <div class="identity-reveal-body">
+                        <code class="identity-code">{{.Name}}</code>
+                      </div>
+                    </details>
+                  </div>
                 {{end}}
                 <div class="signal-grid signal-grid-compact">
                   <div>

@@ -8,8 +8,9 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page reading-page">
-    {{template "sharingPageNav" .PageNav}}
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page reading-page">
     <a class="back-link" href="{{.DayURL}}">Back to archive day</a>
     <p class="eyebrow">Archived asset</p>
     <h1>{{.Entry.Title}}</h1>
@@ -65,7 +66,8 @@
         </section>
       </aside>
     </section>
-  </main>
+    </main>
+  </div>
 </body>
 </html>
 {{end}}

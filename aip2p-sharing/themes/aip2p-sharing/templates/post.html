@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page{{if eq .CoordType "markdown"}} reading-page{{end}}">
-    {{template "sharingPageNav" .PageNav}}
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page{{if eq .CoordType "markdown"}} reading-page{{end}}">
     <p class="eyebrow">{{if eq .CoordType "task"}}Task workspace item{{else if eq .CoordType "skill"}}Skill workspace item{{else if eq .CoordType "agent"}}Agent workspace item{{else if eq .CoordType "idea"}}Idea backlog item{{else if eq .CoordType "code"}}Code implementation asset{{else if eq .CoordType "markdown"}}Knowledge document{{else}}Workspace item{{end}}</p>
     <h1>{{.Post.Message.Title}}</h1>
-    {{if .Post.Summary}}<p class="lede">{{.Post.Summary}}</p>{{end}}
     <p class="meta-line">
       <span>{{.Post.Message.Author}}</span>
       <span>{{formatTime .Post.CreatedAt}}</span>
@@ -20,6 +20,14 @@
       <span>{{.Post.ReplyCount}} replies</span>
       <span>{{.Post.ReactionCount}} reactions</span>
     </p>
+    {{if .Post.Summary}}
+      <details class="panel details-panel">
+        <summary>More</summary>
+        <div class="details-panel-body">
+          <p class="copy">{{.Post.Summary}}</p>
+        </div>
+      </details>
+    {{end}}
 
     {{if eq .CoordType "markdown"}}
       <section class="reading-layout">
@@ -54,196 +62,182 @@
             </section>
           {{end}}
 
-          {{if .DetailFocus}}
-            <section class="panel focus-panel">
-              <div class="panel-head">
-                <div>
-                  <p class="section-label">{{.DetailFocus.Eyebrow}}</p>
-                  <h3>{{.DetailFocus.Title}}</h3>
-                </div>
-              </div>
-              <p class="copy">{{.DetailFocus.Description}}</p>
-              <div class="focus-grid compact-grid">
-                {{if .DetailFocus.Checklist}}
-                  <article class="card">
-                    <p class="section-label">Focus checklist</p>
-                    <ul class="focus-checklist">
-                      {{range .DetailFocus.Checklist}}
-                        <li>{{.}}</li>
+          {{if or .DetailFocus .CoordSections .MetadataSchema .PublishGuide}}
+            <details class="panel details-panel">
+              <summary>More</summary>
+              <div class="details-panel-body">
+                {{if .DetailFocus}}
+                  <section class="subpanel focus-panel">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">{{.DetailFocus.Eyebrow}}</p>
+                        <h3>{{.DetailFocus.Title}}</h3>
+                      </div>
+                    </div>
+                    <p class="copy">{{.DetailFocus.Description}}</p>
+                    <div class="focus-grid compact-grid">
+                      {{if .DetailFocus.Checklist}}
+                        <article class="card">
+                          <p class="section-label">Focus checklist</p>
+                          <ul class="focus-checklist">
+                            {{range .DetailFocus.Checklist}}
+                              <li>{{.}}</li>
+                            {{end}}
+                          </ul>
+                        </article>
                       {{end}}
-                    </ul>
-                  </article>
-                {{end}}
-                {{if .DetailFocus.Actions}}
-                  <article class="card">
-                    <p class="section-label">Next openings</p>
-                    <div class="pill-row">
-                      {{range .DetailFocus.Actions}}
-                        <a class="pill" href="{{.URL}}">{{.Label}}</a>
+                      {{if .DetailFocus.Actions}}
+                        <article class="card">
+                          <p class="section-label">Next openings</p>
+                          <div class="pill-row">
+                            {{range .DetailFocus.Actions}}
+                              <a class="pill" href="{{.URL}}">{{.Label}}</a>
+                            {{end}}
+                          </div>
+                        </article>
                       {{end}}
                     </div>
-                  </article>
+                  </section>
+                {{end}}
+                {{if .CoordSections}}
+                  <section class="subpanel">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">Knowledge profile</p>
+                        <h3>Structured reading context</h3>
+                      </div>
+                    </div>
+                    <div class="coord-grid">
+                      {{range .CoordSections}}
+                        <article class="card coord-card">
+                          <p class="section-label">{{.Title}}</p>
+                          <p class="copy">{{.Description}}</p>
+                          <dl class="coord-fields">
+                            {{range .Items}}
+                              <div>
+                                <dt>{{.Label}}</dt>
+                                <dd>{{.Value}}</dd>
+                              </div>
+                            {{end}}
+                          </dl>
+                        </article>
+                      {{end}}
+                    </div>
+                  </section>
+                {{end}}
+                {{if .MetadataSchema}}
+                  <section class="subpanel">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">Durable contract</p>
+                        <h3>Stable metadata used by this asset type</h3>
+                      </div>
+                    </div>
+                    <div class="contract-grid">
+                      {{range .MetadataSchema.Sections}}
+                        <article class="card coord-card contract-card">
+                          <p class="section-label">{{.Title}}</p>
+                          <p class="copy">{{.Description}}</p>
+                          <dl class="coord-fields">
+                            {{range .Fields}}
+                              <div>
+                                <dt>{{.Label}}</dt>
+                                <dd><code>{{.Key}}</code></dd>
+                              </div>
+                            {{end}}
+                          </dl>
+                        </article>
+                      {{end}}
+                    </div>
+                  </section>
+                {{end}}
+                {{if .PublishGuide}}
+                  <section class="subpanel publish-panel">
+                    <div class="panel-head">
+                      <div>
+                        <p class="section-label">Operator assist</p>
+                        <h3>{{.PublishGuide.Title}}</h3>
+                      </div>
+                    </div>
+                    <p class="copy">{{.PublishGuide.Description}}</p>
+                    <div class="stats">
+                      <article><span>Channel</span><strong><code>{{.PublishGuide.Channel}}</code></strong></article>
+                      <article><span>Kind</span><strong><code>{{.PublishGuide.Kind}}</code></strong></article>
+                      <article><span>Execution mode</span><strong>{{.PublishGuide.ExecutionMode}}</strong></article>
+                      <article><span>Publisher role</span><strong>{{.PublishGuide.PublisherRole}}</strong></article>
+                      <article><span>Identity file</span><strong><code>{{.PublishGuide.IdentityFile}}</code></strong></article>
+                      <article><span>Store path</span><strong><code>{{.PublishGuide.StorePath}}</code></strong></article>
+                    </div>
+                    <p class="copy">{{.PublishGuide.TargetSummary}}</p>
+                    {{if .PublishGuide.ContextNotes}}
+                      <ul class="focus-checklist">
+                        {{range .PublishGuide.ContextNotes}}
+                          <li>{{.}}</li>
+                        {{end}}
+                      </ul>
+                    {{end}}
+                    {{if .PublishGuide.Prerequisites}}
+                      <p class="section-label">Prerequisites</p>
+                      <ul class="focus-checklist">
+                        {{range .PublishGuide.Prerequisites}}
+                          <li>{{.}}</li>
+                        {{end}}
+                      </ul>
+                    {{end}}
+                    <p class="section-label">Suggested command</p>
+                    <pre class="contract-code"><code>{{.PublishGuide.StarterCommand}}</code></pre>
+                    <p class="section-label">Extensions JSON</p>
+                    <pre class="contract-code"><code>{{.PublishGuide.StarterExtensionsJSON}}</code></pre>
+                    {{if .PublishGuide.Workflow}}
+                      <div class="card-list">
+                        {{range .PublishGuide.Workflow}}
+                          <article class="card coord-card contract-card workflow-card">
+                            <p class="section-label">Recommended flow</p>
+                            <h4>{{.Title}}</h4>
+                            <p class="copy">{{.Description}}</p>
+                            {{if and .TemplateLabels (not .Templates)}}
+                              <ul class="focus-checklist">
+                                {{range .TemplateLabels}}
+                                  <li>{{.}}</li>
+                                {{end}}
+                              </ul>
+                            {{end}}
+                            {{if .Templates}}
+                              <div class="contract-grid">
+                                {{range .Templates}}
+                                  <article class="card coord-card contract-card workflow-template-card">
+                                    {{if .Category}}<p class="section-label">{{.Category}}</p>{{end}}
+                                    <p class="section-label">{{.Label}}</p>
+                                    <p class="copy">{{.Description}}</p>
+                                    <p class="copy"><strong>Channel:</strong> <code>{{.Channel}}</code></p>
+                                    <p class="copy"><strong>Kind:</strong> <code>{{.Kind}}</code></p>
+                                    <p class="copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
+                                    <p class="copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
+                                    <p class="copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
+                                    <p class="copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
+                                    <p class="copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
+                                    <p class="copy">{{.TargetSummary}}</p>
+                                    {{if .Prerequisites}}
+                                      <ul class="focus-checklist">
+                                        {{range .Prerequisites}}
+                                          <li>{{.}}</li>
+                                        {{end}}
+                                      </ul>
+                                    {{end}}
+                                    <p class="section-label">Suggested command</p>
+                                    <pre class="contract-code"><code>{{.StarterCommand}}</code></pre>
+                                  </article>
+                                {{end}}
+                              </div>
+                            {{end}}
+                          </article>
+                        {{end}}
+                      </div>
+                    {{end}}
+                  </section>
                 {{end}}
               </div>
-            </section>
-          {{end}}
-
-          {{if .CoordSections}}
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <p class="section-label">Knowledge profile</p>
-                  <h3>Structured reading context</h3>
-                </div>
-              </div>
-              <div class="coord-grid">
-                {{range .CoordSections}}
-                  <article class="card coord-card">
-                    <p class="section-label">{{.Title}}</p>
-                    <p class="copy">{{.Description}}</p>
-                    <dl class="coord-fields">
-                      {{range .Items}}
-                        <div>
-                          <dt>{{.Label}}</dt>
-                          <dd>{{.Value}}</dd>
-                        </div>
-                      {{end}}
-                    </dl>
-                  </article>
-                {{end}}
-              </div>
-            </section>
-          {{end}}
-
-          {{if .MetadataSchema}}
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <p class="section-label">Durable contract</p>
-                  <h3>Stable metadata used by this asset type</h3>
-                </div>
-              </div>
-              <div class="contract-grid">
-                {{range .MetadataSchema.Sections}}
-                  <article class="card coord-card contract-card">
-                    <p class="section-label">{{.Title}}</p>
-                    <p class="copy">{{.Description}}</p>
-                    <dl class="coord-fields">
-                      {{range .Fields}}
-                        <div>
-                          <dt>{{.Label}}</dt>
-                          <dd><code>{{.Key}}</code></dd>
-                        </div>
-                      {{end}}
-                    </dl>
-                  </article>
-                {{end}}
-              </div>
-            </section>
-          {{end}}
-
-          {{if .PublishGuide}}
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <p class="section-label">Operator assist</p>
-                  <h3>{{.PublishGuide.Title}}</h3>
-                </div>
-              </div>
-              <p class="copy">{{.PublishGuide.Description}}</p>
-              <div class="stats">
-                <article>
-                  <span>Channel</span>
-                  <strong><code>{{.PublishGuide.Channel}}</code></strong>
-                </article>
-                <article>
-                  <span>Kind</span>
-                  <strong><code>{{.PublishGuide.Kind}}</code></strong>
-                </article>
-                <article>
-                  <span>Execution mode</span>
-                  <strong>{{.PublishGuide.ExecutionMode}}</strong>
-                </article>
-                <article>
-                  <span>Publisher role</span>
-                  <strong>{{.PublishGuide.PublisherRole}}</strong>
-                </article>
-                <article>
-                  <span>Identity file</span>
-                  <strong><code>{{.PublishGuide.IdentityFile}}</code></strong>
-                </article>
-                <article>
-                  <span>Store path</span>
-                  <strong><code>{{.PublishGuide.StorePath}}</code></strong>
-                </article>
-              </div>
-              <p class="copy">{{.PublishGuide.TargetSummary}}</p>
-              {{if .PublishGuide.ContextNotes}}
-                <ul class="focus-checklist">
-                  {{range .PublishGuide.ContextNotes}}
-                    <li>{{.}}</li>
-                  {{end}}
-                </ul>
-              {{end}}
-              {{if .PublishGuide.Prerequisites}}
-                <p class="section-label">Prerequisites</p>
-                <ul class="focus-checklist">
-                  {{range .PublishGuide.Prerequisites}}
-                    <li>{{.}}</li>
-                  {{end}}
-                </ul>
-              {{end}}
-              <p class="section-label">Suggested command</p>
-              <pre class="contract-code"><code>{{.PublishGuide.StarterCommand}}</code></pre>
-              <p class="section-label">Extensions JSON</p>
-              <pre class="contract-code"><code>{{.PublishGuide.StarterExtensionsJSON}}</code></pre>
-              {{if .PublishGuide.Workflow}}
-                <div class="card-list">
-                  {{range .PublishGuide.Workflow}}
-                    <article class="card coord-card contract-card workflow-card">
-                      <p class="section-label">Recommended flow</p>
-                      <h4>{{.Title}}</h4>
-                      <p class="copy">{{.Description}}</p>
-                      {{if and .TemplateLabels (not .Templates)}}
-                        <ul class="focus-checklist">
-                          {{range .TemplateLabels}}
-                            <li>{{.}}</li>
-                          {{end}}
-                        </ul>
-                      {{end}}
-                      {{if .Templates}}
-                        <div class="contract-grid">
-                          {{range .Templates}}
-                            <article class="card coord-card contract-card workflow-template-card">
-                              {{if .Category}}<p class="section-label">{{.Category}}</p>{{end}}
-                              <p class="section-label">{{.Label}}</p>
-                              <p class="copy">{{.Description}}</p>
-                              <p class="copy"><strong>Channel:</strong> <code>{{.Channel}}</code></p>
-                              <p class="copy"><strong>Kind:</strong> <code>{{.Kind}}</code></p>
-                              <p class="copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
-                              <p class="copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
-                              <p class="copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
-                              <p class="copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
-                              <p class="copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
-                              <p class="copy">{{.TargetSummary}}</p>
-                              {{if .Prerequisites}}
-                                <ul class="focus-checklist">
-                                  {{range .Prerequisites}}
-                                    <li>{{.}}</li>
-                                  {{end}}
-                                </ul>
-                              {{end}}
-                              <p class="section-label">Suggested command</p>
-                              <pre class="contract-code"><code>{{.StarterCommand}}</code></pre>
-                            </article>
-                          {{end}}
-                        </div>
-                      {{end}}
-                    </article>
-                  {{end}}
-                </div>
-              {{end}}
-            </section>
+            </details>
           {{end}}
 
           {{if .CoordRelations}}
@@ -278,10 +272,12 @@
                     <div class="card-list">
                       {{range $group.Items}}
                         <article class="card lane-card">
-                          <div class="card-top">
+                          <div class="card-top card-top-compact">
                             <span class="kind-chip">{{if .Post.Message.Extensions}}{{index .Post.Message.Extensions "coord.type"}}{{end}}</span>
-                            <span class="muted">{{formatTime .Post.CreatedAt}}</span>
-                            <span class="muted">Match {{.Score}}</span>
+                            <div class="card-meta-stack">
+                              <span class="muted">{{formatTime .Post.CreatedAt}}</span>
+                              <span class="muted">Match {{.Score}}</span>
+                            </div>
                           </div>
                           <h4><a href="{{coordPath .Post}}">{{.Post.Message.Title}}</a></h4>
                           <p class="copy">{{.Post.Summary}}</p>
@@ -322,9 +318,11 @@
                     <div class="card-list">
                       {{range .Posts}}
                         <article class="card lane-card">
-                          <div class="card-top">
+                          <div class="card-top card-top-compact">
                             <span class="kind-chip">{{if .Message.Extensions}}{{index .Message.Extensions "coord.type"}}{{end}}</span>
-                            <span class="muted">{{formatTime .CreatedAt}}</span>
+                            <div class="card-meta-stack">
+                              <span class="muted">{{formatTime .CreatedAt}}</span>
+                            </div>
                           </div>
                           <h4><a href="{{coordPath .}}">{{.Message.Title}}</a></h4>
                           <p class="copy">{{.Summary}}</p>
@@ -369,8 +367,12 @@
         <p>{{.Post.Body}}</p>
       </article>
 
-      {{if .DetailFocus}}
-        <section class="panel focus-panel">
+      {{if or .DetailFocus .CoordSections .CoordFields .MetadataSchema .PublishGuide}}
+        <details class="panel details-panel">
+          <summary>More</summary>
+          <div class="details-panel-body">
+        {{if .DetailFocus}}
+          <section class="subpanel focus-panel">
           <div class="panel-head">
             <div>
               <p class="section-label">{{.DetailFocus.Eyebrow}}</p>
@@ -400,11 +402,11 @@
               </article>
             {{end}}
           </div>
-        </section>
-      {{end}}
+          </section>
+        {{end}}
 
-      {{if .CoordSections}}
-        <section class="panel">
+        {{if .CoordSections}}
+          <section class="subpanel">
           <div class="panel-head">
             <div>
               <p class="section-label">{{if eq .CoordType "task"}}Execution profile{{else if eq .CoordType "skill"}}Capability profile{{else if eq .CoordType "agent"}}Operator profile{{else if eq .CoordType "idea"}}Backlog profile{{else if eq .CoordType "code"}}Implementation profile{{else}}Structured profile{{end}}</p>
@@ -427,9 +429,9 @@
               </article>
             {{end}}
           </div>
-        </section>
-      {{else if .CoordFields}}
-        <section class="panel">
+          </section>
+        {{else if .CoordFields}}
+          <section class="subpanel">
           <div class="panel-head">
             <div>
               <p class="section-label">Structured metadata</p>
@@ -440,15 +442,15 @@
             {{range .CoordFields}}
               <article>
                 <span>{{.Label}}</span>
-                <strong>{{.Value}}</strong>
-              </article>
-            {{end}}
-          </div>
-        </section>
-      {{end}}
+              <strong>{{.Value}}</strong>
+            </article>
+          {{end}}
+        </div>
+          </section>
+        {{end}}
 
-      {{if .MetadataSchema}}
-        <section class="panel">
+        {{if .MetadataSchema}}
+          <section class="subpanel">
           <div class="panel-head">
             <div>
               <p class="section-label">Durable contract</p>
@@ -471,11 +473,11 @@
               </article>
             {{end}}
           </div>
-        </section>
-      {{end}}
+          </section>
+        {{end}}
 
-      {{if .PublishGuide}}
-        <section class="panel">
+        {{if .PublishGuide}}
+          <section class="subpanel publish-panel">
           <div class="panel-head">
             <div>
               <p class="section-label">Operator assist</p>
@@ -575,7 +577,10 @@
               {{end}}
             </div>
           {{end}}
-        </section>
+          </section>
+        {{end}}
+          </div>
+        </details>
       {{end}}
 
       {{if .CoordRelations}}
@@ -769,7 +774,9 @@
         {{end}}
       </section>
     </section>
-  </main>
+    </main>
+  </div>
+  {{template "sharingScript" .}}
 </body>
 </html>
 {{end}}

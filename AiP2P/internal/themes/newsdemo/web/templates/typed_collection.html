@@ -104,94 +104,49 @@
         </aside>
 
         <main class="feed">
-          {{if .MetadataSchema}}
-            <section class="panel panel-inline">
-              <p class="panel-label">Durable contract</p>
-              <div class="summary-grid">
-                {{range .MetadataSchema.Sections}}
-                  <div>
-                    <span class="stat-label">{{.Title}}</span>
-                    {{range .Fields}}
-                      <p class="micro-copy"><strong>{{.Label}}:</strong> <code>{{.Key}}</code></p>
-                    {{end}}
-                  </div>
-                {{end}}
-              </div>
-            </section>
-          {{end}}
-          {{if .PublishGuide}}
-            <section class="panel panel-inline">
-              <p class="panel-label">Operator assist</p>
-              <p class="micro-copy">{{.PublishGuide.Description}}</p>
-              <p class="micro-copy"><strong>Channel:</strong> <code>{{.PublishGuide.Channel}}</code></p>
-              <p class="micro-copy"><strong>Kind:</strong> <code>{{.PublishGuide.Kind}}</code></p>
-              <p class="micro-copy"><strong>Execution mode:</strong> {{.PublishGuide.ExecutionMode}}</p>
-              <p class="micro-copy"><strong>Publisher role:</strong> {{.PublishGuide.PublisherRole}}</p>
-              <p class="micro-copy"><strong>Identity file:</strong> <code>{{.PublishGuide.IdentityFile}}</code></p>
-              <p class="micro-copy"><strong>Store path:</strong> <code>{{.PublishGuide.StorePath}}</code></p>
-              <p class="micro-copy">{{.PublishGuide.TargetSummary}}</p>
-              {{if .PublishGuide.ContextNotes}}
-                {{range .PublishGuide.ContextNotes}}
-                  <p class="micro-copy">{{.}}</p>
-                {{end}}
-              {{end}}
-              {{if .PublishGuide.Prerequisites}}
-                {{range .PublishGuide.Prerequisites}}
-                  <p class="micro-copy">{{.}}</p>
-                {{end}}
-              {{end}}
-              <p class="micro-copy"><strong>Suggested command:</strong></p>
-              <pre class="network-code">{{.PublishGuide.StarterCommand}}</pre>
-              <p class="micro-copy"><strong>Extensions JSON:</strong></p>
-              <pre class="network-code">{{.PublishGuide.StarterExtensionsJSON}}</pre>
-              {{if .PublishGuide.Workflow}}
-                {{range .PublishGuide.Workflow}}
-                  <p class="micro-copy"><strong>Recommended flow:</strong> {{.Title}}</p>
-                  <p class="micro-copy">{{.Description}}</p>
-                  {{if .Templates}}
-                    {{range .Templates}}
-                      {{if .Category}}<p class="micro-copy"><strong>{{.Category}}:</strong></p>{{end}}
-                      <p class="micro-copy"><strong>{{.Label}}:</strong> {{.Description}}</p>
-                      <p class="micro-copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
-                      <p class="micro-copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
-                      <p class="micro-copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
-                      <p class="micro-copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
-                      <p class="micro-copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
-                      <p class="micro-copy">{{.TargetSummary}}</p>
-                      {{if .Prerequisites}}
-                        {{range .Prerequisites}}
-                          <p class="micro-copy">{{.}}</p>
-                        {{end}}
+          {{if or .Description .MetadataSchema .PublishGuide}}
+            <details class="panel panel-inline">
+              <summary class="panel-label">More</summary>
+              {{if .Description}}<p class="micro-copy">{{.Description}}</p>{{end}}
+              {{if .MetadataSchema}}
+                <p class="panel-label">Durable contract</p>
+                <div class="summary-grid">
+                  {{range .MetadataSchema.Sections}}
+                    <div>
+                      <span class="stat-label">{{.Title}}</span>
+                      {{range .Fields}}
+                        <p class="micro-copy"><strong>{{.Label}}:</strong> <code>{{.Key}}</code></p>
                       {{end}}
-                      <p class="micro-copy"><strong>Suggested command:</strong></p>
-                      <pre class="network-code">{{.StarterCommand}}</pre>
-                    {{end}}
-                  {{else if .TemplateLabels}}
-                    {{range .TemplateLabels}}
-                      <p class="micro-copy">{{.}}</p>
-                    {{end}}
+                    </div>
                   {{end}}
-                {{end}}
-              {{else if .PublishGuide.Templates}}
-                {{range .PublishGuide.Templates}}
-                  {{if .Category}}<p class="micro-copy"><strong>{{.Category}}:</strong></p>{{end}}
-                  <p class="micro-copy"><strong>{{.Label}}:</strong> {{.Description}}</p>
-                  <p class="micro-copy"><strong>Execution mode:</strong> {{.ExecutionMode}}</p>
-                  <p class="micro-copy"><strong>Reference target:</strong> {{.ReferenceTarget}}</p>
-                  <p class="micro-copy"><strong>Publisher role:</strong> {{.PublisherRole}}</p>
-                  <p class="micro-copy"><strong>Identity file:</strong> <code>{{.IdentityFile}}</code></p>
-                  <p class="micro-copy"><strong>Store path:</strong> <code>{{.StorePath}}</code></p>
-                  <p class="micro-copy">{{.TargetSummary}}</p>
-                  {{if .Prerequisites}}
-                    {{range .Prerequisites}}
-                      <p class="micro-copy">{{.}}</p>
-                    {{end}}
-                  {{end}}
-                  <p class="micro-copy"><strong>Suggested command:</strong></p>
-                  <pre class="network-code">{{.StarterCommand}}</pre>
-                {{end}}
+                </div>
               {{end}}
-            </section>
+              {{if .PublishGuide}}
+                <p class="panel-label">Operator assist</p>
+                <p class="micro-copy">{{.PublishGuide.Description}}</p>
+                <p class="micro-copy"><strong>Channel:</strong> <code>{{.PublishGuide.Channel}}</code></p>
+                <p class="micro-copy"><strong>Kind:</strong> <code>{{.PublishGuide.Kind}}</code></p>
+                <p class="micro-copy"><strong>Execution mode:</strong> {{.PublishGuide.ExecutionMode}}</p>
+                <p class="micro-copy"><strong>Publisher role:</strong> {{.PublishGuide.PublisherRole}}</p>
+                <p class="micro-copy"><strong>Identity file:</strong> <code>{{.PublishGuide.IdentityFile}}</code></p>
+                <p class="micro-copy"><strong>Store path:</strong> <code>{{.PublishGuide.StorePath}}</code></p>
+                <p class="micro-copy">{{.PublishGuide.TargetSummary}}</p>
+                {{if .PublishGuide.ContextNotes}}
+                  {{range .PublishGuide.ContextNotes}}
+                    <p class="micro-copy">{{.}}</p>
+                  {{end}}
+                {{end}}
+                {{if .PublishGuide.Prerequisites}}
+                  {{range .PublishGuide.Prerequisites}}
+                    <p class="micro-copy">{{.}}</p>
+                  {{end}}
+                {{end}}
+                <p class="micro-copy"><strong>Suggested command:</strong></p>
+                <pre class="network-code">{{.PublishGuide.StarterCommand}}</pre>
+                <p class="micro-copy"><strong>Extensions JSON:</strong></p>
+                <pre class="network-code">{{.PublishGuide.StarterExtensionsJSON}}</pre>
+              {{end}}
+            </details>
           {{end}}
           <section class="panel panel-inline">
             <p class="panel-label">Current slice</p>

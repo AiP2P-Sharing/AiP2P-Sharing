@@ -8,8 +8,9 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page">
-    {{template "sharingPageNav" .PageNav}}
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page">
     <a class="back-link" href="/archive">Back to archive</a>
     <p class="eyebrow">Asset archive day</p>
     <h1>{{.Day}}</h1>
@@ -50,7 +51,8 @@
         {{end}}
       </div>
     </section>
-  </main>
+    </main>
+  </div>
 </body>
 </html>
 {{end}}

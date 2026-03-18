@@ -8,7 +8,9 @@
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <main class="simple-page">
+  <div class="shell">
+    {{template "sharingRail" .}}
+    <main class="content simple-page">
     <a class="back-link" href="/">Back to workspace</a>
     <p class="eyebrow">Governance</p>
     <h1>Writer policy</h1>
@@ -19,7 +21,8 @@
       <p>The dedicated editable governance layout will return in a later chapter once the coordination theme gets a full policy form.</p>
       <p>Policy file: <code>{{.PolicyPath}}</code></p>
     </section>
-  </main>
+    </main>
+  </div>
 </body>
 </html>
 {{end}}

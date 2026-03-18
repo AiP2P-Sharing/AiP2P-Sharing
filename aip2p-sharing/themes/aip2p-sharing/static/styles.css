@@ -188,6 +188,22 @@ li {
   flex-direction: column;
 }
 
+.page-nav-compact {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.page-nav-panel {
+  margin-bottom: 14px;
+}
+
+.page-nav-panel .details-panel-body {
+  padding-top: 8px;
+}
+
 .rail-nav a,
 .back-link,
 .button {
@@ -199,6 +215,13 @@ li {
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid var(--line);
+}
+
+.page-nav-compact a {
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
 .rail-nav a.is-active {
@@ -266,6 +289,78 @@ li {
 .publish-panel .contract-grid {
   grid-template-columns: 1fr;
   gap: 10px;
+}
+
+.details-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.details-panel > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 24px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.details-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.details-panel > summary::after {
+  content: "+";
+  float: right;
+  font-size: 1rem;
+}
+
+.details-panel[open] > summary::after {
+  content: "-";
+}
+
+.details-panel-body {
+  padding: 0 24px 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.subpanel + .subpanel {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.network-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.network-stats {
+  margin-top: 0;
+}
+
+.network-block {
+  margin-top: 16px;
+}
+
+.network-code-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.network-code-list code,
+.network-wrap {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.network-inline-details {
+  margin-top: 16px;
 }
 
 .contract-card code {
@@ -416,6 +511,42 @@ li {
   font-size: 0.92rem;
 }
 
+.identity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+
+.button-compact {
+  padding: 6px 10px;
+  font-size: 0.88rem;
+}
+
+.identity-more {
+  display: inline-block;
+}
+
+.identity-more > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--accent);
+  font-size: 0.88rem;
+}
+
+.identity-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.identity-more-body {
+  margin-top: 10px;
+}
+
 .relation-evidence {
   margin: 12px 0 0;
   padding-left: 18px;
@@ -460,7 +591,7 @@ li {
 .coord-grid {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .tail-grid {
@@ -658,6 +789,28 @@ li {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
+}
+
+.card-top-compact {
+  align-items: flex-start;
+}
+
+.card-meta-stack {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  text-align: right;
+  min-width: 0;
+}
+
+.lane-card .kind-chip {
+  flex: 0 0 auto;
+}
+
+.lane-card .muted,
+.card-meta-stack .muted {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .kind-chip,

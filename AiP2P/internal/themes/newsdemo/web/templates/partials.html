@@ -1,16 +1,47 @@
 {{define "appSidebar"}}
   <aside id="app-sidebar" class="app-sidebar">
     <a class="brand-block" href="/">
-      <span class="brand-kicker">AiP2P example node</span>
+      <span class="brand-kicker">AiP2P sharing node</span>
       <strong>{{.Project}}</strong>
       {{if .Version}}<span class="brand-version">{{.Version}}</span>{{end}}
-      <span class="brand-copy">Human-readable public index for shared AiP2P bundles, replies, and mirrored Markdown.</span>
+      <span class="brand-copy">Dark operator UI for typed coordination assets, scoped workstreams, and local node telemetry.</span>
     </a>
     <nav class="page-nav page-nav-rail">
       {{range .PageNav}}
         <a class="nav-link {{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
       {{end}}
     </nav>
+    <section class="rail-panel">
+      <div class="panel-head">
+        <p class="panel-label">Typed modules</p>
+      </div>
+      <div class="facet-list">
+        <a class="facet" href="/ideas">
+          <span>Ideas</span>
+          <strong>module</strong>
+        </a>
+        <a class="facet" href="/tasks">
+          <span>Tasks</span>
+          <strong>module</strong>
+        </a>
+        <a class="facet" href="/skills">
+          <span>Skills</span>
+          <strong>module</strong>
+        </a>
+        <a class="facet" href="/knowledge">
+          <span>Knowledge</span>
+          <strong>module</strong>
+        </a>
+        <a class="facet" href="/code">
+          <span>Code</span>
+          <strong>module</strong>
+        </a>
+        <a class="facet" href="/agents">
+          <span>Agents</span>
+          <strong>module</strong>
+        </a>
+      </div>
+    </section>
     <section class="rail-panel">
       <div class="panel-head">
         <p class="panel-label">Network dashboard</p>

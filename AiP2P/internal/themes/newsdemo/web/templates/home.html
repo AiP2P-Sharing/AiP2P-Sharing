@@ -157,8 +157,87 @@
           </section>
         </aside>
 
-        <main class="feed">
-          {{template "subscriptionSummary" .Subscriptions}}
+      <main class="feed">
+        {{template "subscriptionSummary" .Subscriptions}}
+        <section class="panel panel-inline">
+          <div class="panel-head">
+            <div>
+              <p class="panel-label">Typed modules</p>
+              <p class="micro-copy">Use the old dark UI shell, but open the new typed coordination surfaces directly.</p>
+            </div>
+          </div>
+          <div class="story-links">
+            <a href="/ideas">Ideas</a>
+            <a href="/tasks">Tasks</a>
+            <a href="/skills">Skills</a>
+            <a href="/knowledge">Knowledge</a>
+            <a href="/code">Code</a>
+            <a href="/agents">Agents</a>
+          </div>
+        </section>
+        {{if .PriorityCards}}
+          <section class="panel panel-inline">
+            <div class="panel-head">
+              <div>
+                <p class="panel-label">Priority workspace</p>
+                <p class="micro-copy">Today's modular coordination surfaces layered onto the old UI.</p>
+              </div>
+            </div>
+            <section class="directory-grid">
+              {{range .PriorityCards}}
+                <article class="directory-card">
+                  <div class="card-meta">
+                    <span>{{.Eyebrow}}</span>
+                  </div>
+                  <h2><a href="{{.URL}}">{{.Title}}</a></h2>
+                  <p class="summary">{{.Description}}</p>
+                  <div class="signal-grid signal-grid-compact">
+                    {{range .Stats}}
+                      <div>
+                        <span class="label">{{.Label}}</span>
+                        <strong>{{.Value}}</strong>
+                      </div>
+                    {{end}}
+                  </div>
+                  {{if .Actions}}
+                    <div class="story-links">
+                      {{range .Actions}}
+                        <a href="{{.URL}}">{{.Label}}</a>
+                      {{end}}
+                    </div>
+                  {{end}}
+                </article>
+              {{end}}
+            </section>
+          </section>
+        {{end}}
+        {{if .WorkspaceLanes}}
+          <section class="panel panel-inline">
+            <div class="panel-head">
+              <div>
+                <p class="panel-label">Module lanes</p>
+                <p class="micro-copy">Current typed lanes visible from the old UI shell.</p>
+              </div>
+            </div>
+            <section class="directory-grid">
+              {{range .WorkspaceLanes}}
+                {{if .Posts}}
+                  <article class="directory-card">
+                    <div class="card-meta">
+                      <span>{{.Kind}}</span>
+                      <span>{{len .Posts}} visible</span>
+                    </div>
+                    <h2><a href="{{.Path}}">{{.Title}}</a></h2>
+                    <p class="summary">{{.Description}}</p>
+                    <div class="story-links">
+                      <a href="{{.Path}}">Open lane</a>
+                    </div>
+                  </article>
+                {{end}}
+              {{end}}
+            </section>
+          </section>
+        {{end}}
           <section class="panel panel-inline">
             <p class="panel-label">Current slice</p>
             <div class="summary-grid">

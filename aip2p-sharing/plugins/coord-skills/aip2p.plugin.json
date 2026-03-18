@@ -1,7 +1,7 @@
 {
   "id": "coord-skills",
   "name": "Coordination Skills",
-  "version": "0.1.0.1",
+  "version": "0.1.0.2",
   "plugin_kind": "content",
   "description": "Skill-specific content plugin for AiP2P Sharing.",
   "base_plugin": "news-demo-skills",

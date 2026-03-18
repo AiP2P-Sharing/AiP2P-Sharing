@@ -163,7 +163,7 @@
                     <span class="kind-chip">topic</span>
                     <span class="muted">{{.PrimaryCount}} assets</span>
                   </div>
-                  <h4><a href="{{.URL}}">{{.Name}}</a></h4>
+                  <h4><a href="{{.URL}}">{{if isPublicKeyish .Name}}{{compactIdentity .Name}}{{else}}{{.Name}}{{end}}</a></h4>
                   <p class="copy">Registry entry for this active coordination domain.</p>
                   <div class="stats registry-stats">
                     {{range .Summary}}
@@ -213,7 +213,18 @@
                     <span class="kind-chip">source</span>
                     <span class="muted">{{.PrimaryCount}} assets</span>
                   </div>
-                  <h4><a href="{{.URL}}">{{.Name}}</a></h4>
+                  <h4><a href="{{.URL}}">{{if isPublicKeyish .Name}}{{compactIdentity .Name}}{{else}}{{.Name}}{{end}}</a></h4>
+                  {{if isPublicKeyish .Name}}
+                    <div class="identity-actions">
+                      <button class="button button-muted button-compact" type="button" data-copy-text="{{.Name}}">Copy</button>
+                      <details class="identity-more">
+                        <summary>More</summary>
+                        <div class="identity-more-body">
+                          <code class="contract-code">{{.Name}}</code>
+                        </div>
+                      </details>
+                    </div>
+                  {{end}}
                   <p class="copy">Tracked source page with direct entry into matching typed coordination assets.</p>
                   <div class="stats registry-stats">
                     {{range .Summary}}
@@ -476,6 +487,7 @@
       {{end}}
     </main>
   </div>
+  {{template "sharingScript" .}}
 </body>
 </html>
 {{end}}

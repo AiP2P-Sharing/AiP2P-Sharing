@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{.Kind}}: {{.Name}}</title>
+  <title>{{.Kind}}: {{compactIdentity .Name}}</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -19,13 +19,15 @@
           <div>
             <h1>{{compactIdentity .Name}}</h1>
             {{if isPublicKeyish .Name}}
-              <details class="identity-reveal identity-reveal-hero">
-                <summary>View full key</summary>
-                <div class="identity-reveal-body">
-                  <code class="identity-code">{{.Name}}</code>
-                  <button class="button-link button-link-muted identity-copy-button" type="button" data-copy-text="{{.Name}}">Copy</button>
-                </div>
-              </details>
+              <div class="identity-actions">
+                <button class="button-link button-link-muted identity-copy-button" type="button" data-copy-text="{{.Name}}">Copy</button>
+                <details class="identity-reveal identity-reveal-hero identity-reveal-inline">
+                  <summary>More</summary>
+                  <div class="identity-reveal-body">
+                    <code class="identity-code">{{.Name}}</code>
+                  </div>
+                </details>
+              </div>
             {{end}}
             <p class="hero-copy">This view narrows the local bundle index to a single {{lower .Kind}} while keeping related replies and reactions visible.</p>
           </div>

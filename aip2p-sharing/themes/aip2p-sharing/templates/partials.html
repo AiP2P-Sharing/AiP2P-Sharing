@@ -1,9 +1,55 @@
 {{define "partials.html"}}{{end}}
 
 {{define "sharingPageNav"}}
-  <nav class="rail-nav">
+  <nav class="rail-nav page-nav-compact">
     {{range .}}
       <a class="{{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
     {{end}}
   </nav>
+{{end}}
+
+{{define "sharingRail"}}
+  <aside class="rail">
+    <p class="eyebrow">AiP2P Sharing</p>
+    <h3>{{.Project}}</h3>
+    <p class="copy">Browse typed coordination modules, source and topic registries, archive slices, governance controls, and node operations from one stable workspace rail.</p>
+    {{template "sharingPageNav" .PageNav}}
+  </aside>
+{{end}}
+
+{{define "sharingCollapsedNav"}}
+  <details class="panel details-panel page-nav-panel">
+    <summary>Modules</summary>
+    <div class="details-panel-body">
+      <nav class="rail-nav page-nav-compact">
+        {{range .}}
+          <a class="{{if .Active}}is-active{{end}}" href="{{.URL}}">{{.Name}}</a>
+        {{end}}
+      </nav>
+    </div>
+  </details>
+{{end}}
+
+{{define "sharingScript"}}
+<script>
+  document.querySelectorAll("[data-copy-text]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const text = button.getAttribute("data-copy-text") || "";
+      if (!text) return;
+      const original = button.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = "Copied";
+        setTimeout(() => {
+          button.textContent = original;
+        }, 1200);
+      } catch (err) {
+        button.textContent = "Failed";
+        setTimeout(() => {
+          button.textContent = original;
+        }, 1200);
+      }
+    });
+  });
+</script>
 {{end}}

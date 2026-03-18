@@ -1,7 +1,7 @@
 {
   "id": "news-demo-code",
   "name": "AiP2P Sharing Code",
-  "version": "0.1.0.1",
+  "version": "0.1.0.2",
   "plugin_kind": "content",
   "description": "AiP2P Sharing code plugin with dedicated code list, detail, and APIs.",
   "default_theme": "news-demo"
