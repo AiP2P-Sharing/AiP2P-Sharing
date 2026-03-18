@@ -1,7 +1,7 @@
 {
   "id": "coord-ideas",
   "name": "Coordination Ideas",
-  "version": "0.1.0.4",
+  "version": "0.1.0.5",
   "plugin_kind": "content",
   "description": "Idea-specific content plugin for AiP2P Sharing.",
   "base_plugin": "news-demo-ideas",

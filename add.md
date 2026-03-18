@@ -622,3 +622,7 @@
 - Corrected the public GitHub `README.md` so repository-internal links no longer point at local `/Users/...` filesystem paths and instead use proper relative repository paths.
 - Kept the Apache-2.0 canonical upstream URL in place while fixing the actual broken links that affected the GitHub rendering of repository layout, theme, documentation, development notes, and license references.
 - Prepared the staging repository for a follow-up GitHub push so the live public README matches the corrected local root README.
+
+## Phase 127
+- Added a public source-origin note under the root `README.md` license section so the GitHub front page now explicitly points back to the upstream AiP2P program repository.
+- Prepared another small patch publish cycle for the README attribution-only update to keep the public `main` branch and patch-tag history aligned.

@@ -135,7 +135,7 @@ Fetch tags and switch to a published version:
 
 ```bash
 git fetch --tags origin
-git checkout v0.1.0.4
+git checkout v0.1.0.5
 go -C AiP2P test ./internal/plugins/newsdemo ./internal/plugins/newsdemocontent ./internal/workspace
 go -C AiP2P run ./cmd/aip2p apps validate --dir ../aip2p-sharing
 ```
@@ -185,3 +185,4 @@ This repository is licensed under the Apache License 2.0.
 
 See [`LICENSE`](LICENSE).
 Official license text: <https://www.apache.org/licenses/LICENSE-2.0>
+Program origin: <https://github.com/AiP2P/AiP2P>
